@@ -1,0 +1,170 @@
+1. WHAT THIS LECTURE COVERS
+  - One more ingredient gets added to the fruit stand, and the
+    straight line from Lecture 1 becomes a flat surface. That is
+    the whole lecture: what happens to a linear equation when it
+    has three variables instead of two.
+  - Same rules as before. Fixed budget, spend all of it,
+    fractional items allowed. The professor calls the new
+    scenario "example two, a grocery store."
+  - The payoff (added): a linear equation with two unknowns
+    draws a line. With three unknowns it draws a plane. With
+    more, it draws something you cannot picture but can still
+    compute with, and every slice of it you can picture is
+    still a line. That last sentence is the one to keep.
+
+2. THE GROCERY STORE SCENARIO
+  - The store sells apples at $2 each, oranges at $3 each, and
+    now a loaf of bread at $5 per loaf. Same $30 budget, must be
+    spent entirely, fractional groceries allowed.
+  - His description: "just a slight complication." Three
+    variables instead of two.
+  - The equation: $30 total budget equals the number of apples
+    times two, plus the number of oranges times three, plus the
+    number of bread loaves times five. In the terse notation
+    from Lecture 1, 30 = 2.apples + 3.oranges + 5.bread.
+  - It still fits the general linear form (added): one a_i.x_i
+    term per item, three items, three terms, added up.
+
+3. SOLVING FOR ONE VARIABLE AGAIN
+  - Just as in the fruit stand, he wants oranges as a function
+    of the other items. Same tool: manipulate both sides of the
+    equation the same way.
+  - His steps, as he describes them: subtract 30 and 3.oranges
+    from both sides, then divide both sides by minus three. That
+    isolates oranges on one side and every other variable on the
+    other. He says to check his work yourself.
+  - The result he lands on: an equation for the number of
+    oranges depending on both the number of apples and the
+    number of bread loaves.
+  - What that equation looks like (added): oranges = 10 -
+    2/3.apples - 5/3.bread. The 10 is 30/3. The 2/3 is the apple
+    price over the orange price. The 5/3 is the bread price over
+    the orange price. Each other item shows up as its own
+    exchange rate against oranges, same idea as the slope in
+    Lecture 1, now with two of them.
+  - Why divide by minus three (added): after subtracting 30 and
+    3.oranges from both sides, the oranges term is on the left
+    as -3.oranges and everything else is on the right. Dividing
+    by -3 flips every sign on the right and leaves oranges alone
+    with a coefficient of 1. Subtract 2.apples instead and
+    divide by positive 3 and you get the same answer by a
+    different road. Both are legal because both sides get the
+    same treatment.
+  - Example (added): a coffee cart sells bagels at $3, coffees
+    at $4, and muffins at $2. You have $24 and must spend it
+    all. The equation is 24 = 3.bagels + 4.coffees + 2.muffins.
+    Solve for coffees with the professor's road:
+    - Subtract 24 and 4.coffees from both sides:
+      -4.coffees = 3.bagels + 2.muffins - 24.
+    - Divide both sides by -4:
+      coffees = 6 - 3/4.bagels - 1/2.muffins.
+    - Check with 2 bagels and 4 muffins: 6 - 1.5 - 2 = 2.5
+      coffees. Cost: 2 bagels is $6, 4 muffins is $8, 2.5 coffees
+      is $10. Total $24.
+    - Check the corners: no bagels and no muffins means 6
+      coffees. 8 bagels alone means 0 coffees ($24 of bagels).
+      12 muffins alone means 0 coffees ($24 of muffins).
+
+4. STILL A LINEAR EQUATION
+  - He is explicit that the rearranged equation is still a
+    linear equation even though it does not look like a plain
+    straight line. It fits the general form: an a times an x,
+    then another a times another x. One pair for apples and
+    their cost, one pair for bread and their cost.
+  - The number of oranges is now shaped by both the number of
+    apples and the number of bread loaves. Both have to be
+    accounted for.
+  - Small aside from the recording: he notes his slide colors
+    apples orange when it "really should be red." Cosmetic, not
+    math.
+  - How many solutions? Infinitely many again, for the same two
+    reasons: fractional items are allowed and the full budget
+    must be spent.
+  - Why still infinite, and more so (added): in Lecture 1 you
+    picked one number (apples) and the equation handed back the
+    other. Now you pick two numbers freely (apples and bread)
+    and the equation hands back the third. Two free choices
+    instead of one. The solution set went from a line's worth of
+    points to a surface's worth.
+
+5. VISUALIZING THREE VARIABLES: THE PLANE
+  - Two variables plotted as apples against oranges gave a
+    straight line. Three variables need a third axis, the number
+    of bread loaves. Plotting the equation on those three axes
+    gives a plane, a flat surface, instead of a line.
+  - See the rotating 3D surface in Lecture 2 (notebook section
+    "Example 2: A Grocery Store," the plot_surface widget with
+    the two angle sliders). He rotates it so you can get a sense
+    of the flat surface in three dimensions.
+  - KEY TERM: plane: the flat surface you get when a linear
+    equation in three variables is plotted on three axes (added
+    definition). Flat means no bumps, no curvature. Any straight
+    line drawn between two points on it stays on it.
+  - Why flat (added): same reason the two-variable version was
+    straight. Every variable appears once, multiplied by a
+    plain number, so moving one step in apples always changes
+    oranges by the same amount (2/3 fewer) no matter where you
+    stand on the surface. A surface where the tilt never changes
+    is a flat one.
+
+6. THE PLANE VIEWED EDGE-ON IS A LINE
+  - His key move: view the plane from the right angle and it
+    almost looks like a line. His slide hint for the viewing
+    angle was "40 and minus three." From that angle you see the
+    linear relationship between two of the variables.
+  - The line he points at is the relationship between bread
+    loaves and oranges: change the number of bread loaves and
+    the number of oranges must change to respect the budget.
+  - His framing: imagine fixing the number of apples and looking
+    only at bread loaves versus oranges. That is what you are
+    seeing when you view the flat surface from that angle.
+  - The practical version (added): fix one variable and the
+    three-variable equation collapses to a two-variable one, and
+    two-variable linear equations are lines. This is the move
+    you will make constantly. Hold everything else steady, vary
+    one thing, read the slope.
+  - Example (added): the coffee cart, coffees = 6 - 3/4.bagels -
+    1/2.muffins. Fix bagels at 2. Then coffees = 4.5 -
+    1/2.muffins. That is y = b + m.x with intercept 4.5 and
+    slope -1/2. Every muffin costs half a coffee. Fix bagels at
+    4 instead and the intercept drops to 3 but the slope stays
+    -1/2. Changing the fixed variable slides the line up or
+    down. It never tilts it. That is the flatness of the plane
+    showing up in the algebra.
+  - Code (added): a slice of the plane is one line of NumPy.
+      import numpy as np
+      mf = np.linspace(0,9,10) ## muffin counts
+      bg = 2 ## fix bagels
+      print(6-0.75*bg-0.5*mf) ## coffees along the slice
+
+7. KEY TAKEAWAYS
+  - Adding a third item adds a third variable and a third
+    a_i.x_i term. The equation is still linear.
+  - Solving for one variable works the same way: do the same
+    thing to both sides until the variable stands alone.
+  - Each remaining variable shows up with its own slope, its
+    price divided by the solved-for item's price.
+  - Infinitely many solutions again, now two free choices deep.
+  - Three variables plot as a plane, a flat surface, on three
+    axes.
+  - View the plane from the right angle, or fix one variable,
+    and you are back to a line. Linear relationships between
+    pairs of variables live inside the plane.
+
+8. QUIZ-SAFE FACTS
+  - Grocery store items: apples $2, oranges $3, bread $5 per
+    loaf. Budget $30, spend all of it, fractional items allowed.
+  - Equation: 30 = 2.apples + 3.oranges + 5.bread.
+  - The professor's rearrangement steps: subtract 30 and
+    3.oranges from both sides, then divide both sides by minus
+    three.
+  - Oranges depend on both apples and bread.
+  - It is still a linear equation because it fits the general
+    form, an a times an x plus another a times another x.
+  - Infinitely many solutions because of fractional items and
+    the full-budget rule.
+  - Three variables plot as a plane (a flat surface), not a
+    line. The third axis is bread loaves.
+  - Viewed from the right angle, the plane shows a line: the
+    linear relationship between two of the variables with the
+    third held fixed.

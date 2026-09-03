@@ -1,0 +1,180 @@
+1. WHAT THIS LECTURE COVERS
+  - A second way to think about vectors. Lecture 3 treated them
+    as ordered lists that keep equations short and information
+    sorted. This lecture borrows the physicist's definition: a
+    vector is anything with a direction and a length.
+  - Two things get introduced on the back of that: the norm (a
+    vector's length as a single number) and where the norm
+    formula comes from (the Pythagorean theorem).
+  - Why the second view matters (added): the list view tells you
+    how to store a vector and how to add or scale it. The
+    direction-and-length view tells you what it means. Both are
+    the same object. The norm is the bridge, because it turns a
+    list of components into the one number a physicist would
+    call "how far."
+
+2. THE PHYSICIST'S DEFINITION
+  - His statement: physicists love vectors and linear algebra
+    because they provide a concise way to encode
+    high-dimensional information in one abstraction.
+  - His illustration: a spaceship moving through three
+    dimensions and through time. Its current location and its
+    current velocity can be encoded as a single vector instead
+    of tracking the three-dimensional positions and the speed
+    separately as you go.
+  - KEY TERM: vector (physics): anything that has a direction
+    and a length.
+  - What "one abstraction" buys you (added): a single variable
+    name for a bundle of numbers, and a single set of rules for
+    manipulating the bundle. Update the position? Add a vector.
+    Double the speed? Scale a vector. The bookkeeping of "which
+    coordinate am I on" disappears into the notation.
+
+3. THE BASEBALL POSITION VECTOR
+  - His running example: a vector p encodes a baseball's
+    position as it is thrown from the origin, the (0, 0) point.
+    A simulation steps forward through time, a dashed line
+    traces the trajectory, and a gray arrow shows p at each
+    step. See the draw_trajectory widget in Lecture 4 (notebook
+    section "A Physicist Intro to Vectors," slider t).
+  - Instead of tracking x and y coordinates separately, the
+    location goes into the vector p, and p changes over time as
+    the ball travels up and back down to zero.
+  - The ball is thrown in two dimensions, so p has two
+    components. p_1 is the location in the x direction (the
+    horizontal). p_2 is the location in the y direction (the
+    vertical), measured as distance from the origin.
+  - Example (added): a delivery drone lifts off from its pad at
+    (0, 0) and after a few seconds sits 6 meters east and 8
+    meters up. Its position vector is p = (6, 8). The first
+    component is horizontal distance, the second is height.
+    Same structure as the ball, different scene.
+
+4. THE NORM: A VECTOR'S LENGTH
+  - The question the norm answers: how far is the ball from
+    where it was thrown? The throw started at the origin, so the
+    answer is the length of p.
+  - KEY TERM: norm: a vector's length, or magnitude, written
+    with two sets of vertical bars around the vector (||p||).
+    The double bars are an operator, the same way a square-root
+    sign is.
+  - For a two-dimensional vector: the norm is the square root of
+    the sum of the squares of the components. ||p|| equals the
+    square root of p_1 squared plus p_2 squared.
+  - His emphasis: the norm of a vector is always a number, not a
+    vector. It represents length or magnitude.
+  - Example (added): the drone at p = (6, 8).
+    - Square the components: 6 squared is 36, 8 squared is 64.
+    - Add them: 36 + 64 = 100.
+    - Square root: ||p|| = 10. The drone is 10 meters from its
+      pad, straight-line distance.
+  - Why square, add, root (added): squaring gets rid of signs
+    (a component of -6 is just as far as +6) and makes the
+    contributions add cleanly. The square root undoes the
+    squaring so the answer is back in the original units. Meters
+    in, meters out.
+
+5. HIGHER DIMENSIONS
+  - The ball could be thrown in three-dimensional space instead.
+    The norm formula generalizes: add more terms under the
+    square root, one for each component. The square root of p_1
+    squared plus p_2 squared plus p_3 squared, and so on for as
+    many components as the vector has.
+  - Example (added): the drone flies to (2, 3, 6), meaning 2
+    east, 3 north, 6 up.
+    - Squares: 4, 9, 36. Sum: 49. Root: 7.
+    - ||p|| = 7 meters from the pad.
+  - Example (added): the formula does not care that you cannot
+    draw four dimensions. For a four-component vector (1, 2, 2,
+    4): squares 1, 4, 4, 16, sum 25, norm 5. The arithmetic is
+    identical, the picture is gone. That is the point of having
+    a formula.
+  - Code (added): NumPy's norm is one call. The hand version is
+    shown so you can see it is the same arithmetic.
+      import numpy as np
+      p = np.array([2,3,6]) ## drone position, meters
+      print(np.sqrt(np.sum(p**2))) ## 7.0, square add root
+      print(np.linalg.norm(p)) ## 7.0, same thing
+
+6. WHERE THE NORM COMES FROM: PYTHAGORAS
+  - His question: where did this equation come from? Answer: it
+    is derived from the Pythagorean theorem, which some will
+    remember from a trigonometry section on triangles containing
+    a right angle.
+  - KEY TERM: right triangle: a triangle containing a right
+    angle, a 90-degree corner (added definition).
+  - KEY TERM: hypotenuse: the longest side of a right triangle,
+    the one directly opposite the right angle.
+  - The theorem as he states it: for a right triangle with base
+    length a and height length b, the hypotenuse c satisfies
+    a squared plus b squared equals c squared. Take the square
+    root of both sides and you get c equals the square root of
+    a squared plus b squared. That looks exactly like the norm
+    equation for a two-component vector.
+  - Why they are the same thing (added): a vector (p_1, p_2)
+    drawn from the origin is the hypotenuse of a right triangle
+    whose base runs p_1 along the horizontal axis and whose
+    height runs p_2 straight up from there. The axes meet at a
+    right angle, so the theorem applies, so the arrow's length
+    is the square root of p_1 squared plus p_2 squared. The
+    norm is not a new formula. It is Pythagoras with the sides
+    renamed.
+  - Example (added): the drone at (6, 8) again. Base a = 6
+    (along the ground), height b = 8 (straight up), hypotenuse
+    c = the arrow from pad to drone. 36 + 64 = 100, c = 10. A
+    6-8-10 triangle, which is a 3-4-5 triangle doubled.
+
+7. THE TRIANGLE ON THE BALL'S PATH
+  - To drive the point home he reruns the baseball simulation
+    with the corresponding right triangle drawn in orange under
+    the vector p. See the second draw_trajectory widget in the
+    same notebook section, the one that draws the triangle once
+    t is above zero.
+  - The triangle has base a, height b, and hypotenuse c, where
+    c is the side directly across from the right angle. The
+    length of c is the square root of a squared plus b squared.
+  - For the vector p at the moment he pauses the simulation, a
+    is 1.56 and b is 0.6, and plugging those in gives back the
+    norm equation from the earlier slide. His closing line: this
+    is how the triangle fits into the interpretation.
+  - Practical reading (added): any time you compute a norm, you
+    are computing the hypotenuse of a triangle you did not
+    bother to draw. In three dimensions it is two triangles
+    stacked (ground distance first, then height). In more
+    dimensions it is more triangles. The formula chains them
+    for you.
+
+8. KEY TAKEAWAYS
+  - A vector is anything with a direction and a length. That is
+    the physics definition, and it is the same object as the
+    ordered list from Lecture 3.
+  - One vector can hold a whole bundle of high-dimensional
+    information, position and velocity included.
+  - The norm ||p|| is the vector's length. Square every
+    component, add, take the square root. The result is a single
+    number.
+  - More components means more squared terms under the root.
+    The formula works in any number of dimensions.
+  - The norm formula is the Pythagorean theorem. The vector is
+    the hypotenuse, the components are the other two sides.
+
+9. QUIZ-SAFE FACTS
+  - Physicists love vectors because they encode high-dimensional
+    information in one abstraction. Spaceship example: location
+    and velocity in a single vector.
+  - In physics, a vector is anything that has a direction and a
+    length.
+  - The baseball vector p has two components: p_1 is the x
+    (horizontal) location, p_2 is the y (vertical) location. The
+    ball is thrown from the origin (0, 0).
+  - Two vertical bars on each side of a vector denote its norm,
+    also called its length or magnitude.
+  - Two-dimensional norm: square root of the sum of the squares
+    of the components.
+  - The norm of a vector is always a number.
+  - Higher-dimensional norm: add one squared term per component
+    under the square root.
+  - The norm equation is derived from the Pythagorean theorem:
+    a squared plus b squared equals c squared, where c is the
+    hypotenuse, the side directly opposite the right angle.
+  - In the paused simulation, a was 1.56 and b was 0.6.

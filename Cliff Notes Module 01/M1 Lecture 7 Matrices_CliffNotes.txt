@@ -1,0 +1,293 @@
+1. WHAT THIS LECTURE COVERS
+  - The second big object of linear algebra after the vector: the
+    matrix. What it is, how its size is described, the two jobs it
+    does (holding data, acting as a function), the component-wise
+    operations, and the one operation that is not component-wise:
+    matrix multiplication.
+  - Three functions you can build out of a 2 by 2 matrix: rotate,
+    scale, shear. These three come back in the eigenvector lectures,
+    so the mechanics here matter later.
+
+2. WHAT A MATRIX IS
+  - KEY TERM: matrix: a set of row vectors, or a set of column
+    vectors, depending on how you want to use it. If a vector is a
+    list of numbers, a matrix is a grid of numbers.
+  - KEY TERM: component: one number inside the grid (added
+    definition). The lecture's example matrix M is written with
+    components a1, a2, a3, b1, b2, b3, and so on.
+  - The same grid can be read two ways. Read down: each column is a
+    vector. Read across: each row is a vector. Which reading you use
+    depends on the use case, and the lecture promises examples of
+    both as the course goes on.
+  - Example (added): a hardware shop tracks three products across
+    two stores. Rows are stores, columns are products.
+        M = [[5, 1, 7],
+             [2, 8, 3]]
+    Read across and each row is one store's stock vector, (5,1,7)
+    for store one. Read down and each column is one product's
+    stock across stores, (5,2) for product one. Same numbers,
+    two different vectors, depending on the question you ask.
+  - Vectors are just one-dimensional matrices. A matrix with one
+    column is a vector standing up, a matrix with one row is a
+    vector lying down (added).
+
+3. DIMENSIONS: ROWS FIRST, THEN COLUMNS
+  - KEY TERM: dimension of a matrix: the number of rows, then the
+    number of columns, in that order, always.
+  - The lecture's M has four column vectors, each with three
+    components, so M is 3 by 4. Three rows, four columns.
+  - The hardware shop matrix above has two rows and three columns,
+    so it is 2 by 3. Say "two by three", never "three by two" for
+    that grid. Rows first is the convention the entire field runs
+    on, and NumPy's shape follows it (added).
+  - Why it matters (added): every rule about which matrices can be
+    multiplied, added, or fed to a function is a rule about
+    dimensions. Get the order backwards and every rule reads
+    backwards.
+
+4. HIGHER DIMENSIONS: TENSORS
+  - A matrix with rows and columns is a two-dimensional matrix.
+    Matrices can be higher dimensional. Instead of a rectangle,
+    picture a brick or a cube: a stack of matrices.
+  - In higher dimensions, think of the object not as a set of
+    vectors but as a set of matrices.
+  - KEY TERM: tensor: the machine learning name for these higher
+    dimensional matrices. You will run into the term later.
+  - Practical framing (added): a spreadsheet is a matrix. A workbook
+    with several identical sheets stacked is a tensor. Nothing
+    mystical, just one more index.
+
+5. MATRICES AS DATA: IMAGES
+  - The first job of a matrix is to hold data. The lecture's example
+    is an image file. A PNG (portable network graphic) is an x by y
+    grid with three matrices stacked back to back. That stack is a
+    tensor.
+  - In the lecture the professor loads a flower image into Python,
+    asks for its dimensions, and shows that it is a three
+    dimensional NumPy array: rows, columns, and a third dimension of
+    length three. See the flower image and the printed slices in
+    the Lecture 7 notebook section "Matrices as Data".
+  - The first two dimensions are the x-y coordinates of the pixels.
+    The third dimension is the color of each pixel.
+  - KEY TERM: RGB: a color written as three numbers, each on the
+    range 0 to 255, saying how much red, how much green, and how
+    much blue to mix. Add those three and you get any color your
+    computer can show.
+  - So layer one of the image is a matrix of red values, layer two
+    is a matrix of green values, and layer three is blue (added: the
+    lecture shows the first two layers and names them red and
+    green).
+  - Example (added): a two pixel by two pixel image is a 2 by 2 by 3
+    tensor. Pixel (0,0) pure red, pixel (0,1) pure green, pixel
+    (1,0) pure blue, pixel (1,1) white.
+      import numpy as np
+      img = np.array([[[255,0,0],[0,255,0]],[[0,0,255],[255,255,255]]])
+      print(img.shape) ## (2, 2, 3)
+      print(img[:,:,0]) ## red layer: [[255 0],[0 255]]
+    The red layer lights up where the pixel is red or white, and
+    nowhere else. Slice out layer 0 and you get a plain 2 by 2
+    matrix. That slice is exactly what the professor prints for the
+    flower.
+
+6. MATRICES AS FUNCTIONS
+  - The second job of a matrix: it can represent a linear
+    transformation of other matrices or vectors. In that case,
+    think of the matrix as a function.
+  - KEY TERM: linear map: the function a matrix represents when the
+    matrix is used as a function. The lecture also calls it a linear
+    system of equations. Later lectures build on this.
+  - Two reasons the lecture gives for writing functions as matrices:
+    it can accelerate computation (NumPy again), and it gives an
+    intuitive explanation of what the function does.
+  - The mechanic: a matrix R "acts on" another matrix, or a vector,
+    by matrix multiplication. To make sense of "acts on" you need
+    the multiplication rule, which is section 8.
+  - Practical framing (added): a function like f(x) = 3x takes a
+    number in and gives a number out. A matrix used as a function
+    takes a vector (or a whole matrix of points) in and gives a
+    transformed vector (or matrix) out. The matrix is the f.
+
+7. COMPONENT-WISE OPERATIONS
+  - As with vectors, two matrices of the same size can be added,
+    subtracted, and multiplied component by component. Division
+    works the same way. Same slot in, same slot out.
+  - Example (added), two 2 by 2 matrices:
+        M = [[2, 0],      N = [[1, 4],
+             [1, 3]]           [2, 5]]
+        M + N = [[3, 4],   M - N = [[ 1, -4],   M * N = [[2,  0],
+                 [3, 8]]            [-1, -2]]            [2, 15]]
+    Top left of M + N is 2 + 1. Top left of M * N is 2 times 1.
+    Bottom right of M * N is 3 times 5. Nothing crosses rows or
+    columns.
+  - The lecture uses plain +, -, and * for these, and reserves the
+    dot for the real matrix product. Keep the two multiplications
+    separate in your head: * is component-wise, the dot is not.
+
+8. MATRIX MULTIPLICATION (THE DOT PRODUCT)
+  - KEY TERM: matrix multiplication: also called the matrix dot
+    product. This is the operation meant when a matrix M "acts on"
+    a matrix N. Written with the same dot as the vector dot product.
+  - The rule: think of M as a set of row vectors and N as a set of
+    column vectors. The dot product of M and N is the vector dot
+    product of each row of M with each column of N.
+  - Where each answer lands: row i of M dotted with column j of N
+    goes in row i, column j of the result. Top left is row one of M
+    with column one of N. Next to it is row one of M with column
+    two of N. And so on until every row-column pair is done.
+  - Example (added), same M and N as above:
+        M . N = [[2, 0],  . [[1, 4],
+                 [1, 3]]     [2, 5]]
+      top left     = (2,0) . (1,2) = 2*1 + 0*2 = 2
+      top right    = (2,0) . (4,5) = 2*4 + 0*5 = 8
+      bottom left  = (1,3) . (1,2) = 1*1 + 3*2 = 7
+      bottom right = (1,3) . (4,5) = 1*4 + 3*5 = 19
+        M . N = [[2,  8],
+                 [7, 19]]
+    Compare to M * N from section 7, which was [[2,0],[2,15]].
+    Same two matrices, different operation, different answer.
+  - Order matters (added). N . M for the same pair is
+    [[6,12],[9,15]], not [[2,8],[7,19]]. Matrix multiplication is
+    not commutative in general, so "M acts on N" and "N acts on M"
+    are different functions.
+  - Code (added):
+      import numpy as np
+      M,N = np.array([[2,0],[1,3]]),np.array([[1,4],[2,5]])
+      print(M*N) ## component-wise, [[2 0],[2 15]]
+      print(np.dot(M,N)) ## matrix product, [[2 8],[7 19]]
+    The notebook uses np.dot for every "acts on" in this lecture.
+    The @ operator does the same job in modern NumPy (added).
+
+9. WHEN THE SHAPES FIT
+  - The lecture's example multiplies two 3 by 3 matrices, but in
+    general you need only that the second dimension of M matches
+    the first dimension of N. Columns of M equals rows of N.
+  - Why (added): each row of M is dotted with each column of N, and
+    a vector dot product needs both vectors the same length. A row
+    of M has as many entries as M has columns. A column of N has as
+    many entries as N has rows. Those two counts must agree.
+  - The result's size (added): rows of M by columns of N. The inner
+    numbers must match and then they vanish.
+  - Example (added): a 2 by 3 times a 3 by 2 gives a 2 by 2.
+        A = [[1, 2, 3],   B = [[1, 0],
+             [4, 5, 6]]        [0, 1],
+                               [2, 2]]
+        A . B = [[ 7,  8],
+                 [16, 17]]
+    Top left is (1,2,3) . (1,0,2) = 1 + 0 + 6 = 7. Try B . B and
+    NumPy refuses: a 3 by 2 times a 3 by 2 has 2 on the inside
+    against 3, and the row-column dot products have no matching
+    length.
+  - This is why a 2 by 2 rotation matrix can act on a 2 by n matrix
+    of points for any n. The 2 matches, and n is free.
+
+10. THE ROTATION MATRIX
+  - Pick an angle theta. The rotation matrix is the 2 by 2 built
+    from cosine and sine values:
+        R(theta) = [[cos(theta), -sin(theta)],
+                    [sin(theta),  cos(theta)]]
+    It rotates another matrix, or a set of scatter points, by the
+    angle theta.
+  - The setup: encode the x-y coordinates of a scatter plot as a
+    2 by n matrix P, x values along the top row and y values along
+    the bottom row, one column per point. Then R(theta) . P is the
+    same cloud of points, rotated around the origin.
+  - The lecture's demo rotates a scatter plot with a slider for
+    theta. See the dinosaur widget in the Lecture 7 notebook section
+    "Matrices as Functions".
+  - Example (added), three points rotated by 90 degrees. Put (1,0),
+    (0,1), and (1,1) into P as columns. At 90 degrees cos is 0 and
+    sin is 1, so R is [[0,-1],[1,0]].
+        R . P = [[0, -1],  . [[1, 0, 1],   = [[0, -1, -1],
+                 [1,  0]]     [0, 1, 1]]      [1,  0,  1]]
+    (1,0) went to (0,1), a quarter turn counterclockwise. (0,1) went
+    to (-1,0). (1,1) went to (-1,1). Every point turned the same
+    amount around the origin, which is what rotation means.
+  - Code (added):
+      import numpy as np
+      R = lambda t: np.array([[np.cos(t),-np.sin(t)],[np.sin(t),np.cos(t)]])
+      P = np.array([[1,0,1],[0,1,1]]) ## one point per column
+      print(np.round(np.dot(R(np.pi/2),P),4)) ## 90 degrees in radians
+    Angles go in as radians. Pi over two is 90 degrees.
+
+11. SCALING AND SHEAR
+  - Matrices can do more than rotate. Certain matrices stretch or
+    shrink points.
+  - Scaling: pick a number a and build M = [[a, 0], [0, a]]. Acting
+    on points P, it rescales their distance from the origin by a
+    factor of a. If a is negative, the points pass through the
+    origin and reflect to the opposite quadrant.
+  - Example (added): with a = 2 the three points from section 10
+    become (2,0), (0,2), (2,2), twice as far out along the same
+    lines. With a = -1 they become (-1,0), (0,-1), (-1,-1), same
+    distance, opposite side of the origin.
+  - KEY TERM: shear: a matrix that shrinks in one dimension by a
+    factor a and stretches in another by a different factor b.
+  - The lecture's shear matrix is the product of two matrices, one
+    carrying a and one carrying b:
+        [[1, a],  . [[1, 0],  = [[1 + a*b, a],
+         [0, 1]]     [b, 1]]     [b,       1]]
+    It shears horizontally by a and vertically by b. Pick a, pick
+    b, multiply the two matrices to get M, then let M act on your
+    points.
+  - What a horizontal shear looks like: changing a shifts points
+    horizontally and their vertical position does not change at
+    all. Changing b gives the vertical shear. Both at once is a
+    combined shear. See the shear widget with its red and blue
+    reference vectors in the Lecture 7 notebook, right after the
+    scaling demo.
+  - Example (added), horizontal shear with a = 0.5 and b = 0. Then
+    M = [[1, 0.5], [0, 1]]. Acting on (1,0), (0,1), (1,1):
+        M . P = [[1, 0.5, 1.5],
+                 [0, 1,   1  ]]
+    (1,0) did not move: it sits on the floor, height zero, so there
+    is nothing to shift. (0,1) slid right to (0.5,1). (1,1) slid
+    right to (1.5,1). Every point moves sideways by half its
+    height, and no height changed. That is the whole idea of a
+    horizontal shear (added).
+  - Example (added), both at once, a = 0.5 and b = 0.25:
+        M = [[1.125, 0.5],
+             [0.25,  1  ]]
+    1.125 is 1 + 0.5 times 0.25. Now (1,0) goes to (1.125, 0.25)
+    and (0,1) goes to (0.5, 1). Both reference directions tilt.
+  - Why the reference vectors matter (added): the red and blue
+    arrows in the demo are the x and y directions after the shear.
+    Watch which one tilts and which one stays put. Lecture 8 opens
+    by pointing at the one that stays put.
+
+12. KEY TAKEAWAYS
+  - A matrix is a grid of numbers, readable as rows or as columns.
+    Vectors are one-dimensional matrices. Stacked matrices are
+    tensors.
+  - Dimensions are rows by columns, always in that order.
+  - A matrix holds data (an image is a stack of three color
+    matrices) or represents a function (a linear map).
+  - Addition, subtraction, and * are component-wise and need equal
+    sizes. The matrix dot product is different: each row of M
+    dotted with each column of N.
+  - Multiplication needs the columns of M to equal the rows of N.
+    The result is rows of M by columns of N.
+  - Rotation, scaling, and shear are all 2 by 2 matrices acting on
+    a 2 by n matrix of points.
+
+13. QUIZ-SAFE FACTS
+  - A matrix is a set of row vectors or a set of column vectors.
+  - Dimension is stated as rows then columns. The lecture's M with
+    four columns of three components is 3 by 4.
+  - Higher dimensional matrices are called tensors in machine
+    learning. Vectors are one-dimensional matrices.
+  - PNG stands for portable network graphic. An image is an x by y
+    grid with three matrices stacked: red, green, blue.
+  - RGB values each run 0 to 255.
+  - When a matrix represents a function, the function is called a
+    linear map or a linear system of equations.
+  - Matrix multiplication is also called the matrix dot product. It
+    is the vector dot product of each row of M with each column of
+    N.
+  - Requirement for M . N: the second dimension of M matches the
+    first dimension of N.
+  - Rotation matrix: [[cos theta, -sin theta], [sin theta, cos
+    theta]]. It is 2 by 2 and can act on any 2 by n matrix.
+  - Scaling matrix: [[a, 0], [0, a]] rescales distance from the
+    origin by a. Negative a reflects through the origin.
+  - Shear matrix: [[1, a], [0, 1]] . [[1, 0], [b, 1]] equals
+    [[1 + ab, a], [b, 1]]. Horizontal shear by a, vertical by b.

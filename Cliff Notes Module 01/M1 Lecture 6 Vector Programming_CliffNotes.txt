@@ -1,0 +1,239 @@
+1. WHAT THIS LECTURE COVERS
+  - How to do the vector operations from Lectures 3 through 5 in
+    Python. First the honest way with plain lists and for loops,
+    then the right way with NumPy.
+  - Two arguments for NumPy: less code, and much faster code.
+    The lecture ends with a timing benchmark that shows the
+    speed difference on million-element vectors.
+  - Practical framing (added): this is the lecture where the
+    module stops being notation and starts being a tool. Every
+    formula so far maps to a one-line NumPy call, and the rest
+    of the course will assume you reach for those calls by
+    reflex.
+
+2. VECTORS AS PYTHON LISTS
+  - Python lists are "a very natural candidate" for representing
+    vectors. A vector is an ordered list of numbers and so is a
+    list.
+  - His two ways to build one: write the numbers out inside
+    square brackets, or build an arbitrarily large one
+    programmatically with range and wrap it in list. His range
+    example runs from six up to (but not including) ten, so it
+    holds six through nine.
+  - Example (added): two length-3 vectors as lists, a = [2, 6,
+    3] and b = [4, 1, 5]. Or list(range(3, 8)) for [3, 4, 5, 6,
+    7]. The upper bound is excluded, same as every range in
+    Python.
+
+3. VECTOR OPERATIONS WITH FOR LOOPS
+  - The componentwise operations from earlier lectures
+    (addition, subtraction, multiplication, division) all work
+    the same way on lists: loop over the positions and combine
+    the matching components. The two vectors must be the same
+    length.
+  - Addition, as he describes it: for each element in list A,
+    grab that component of A and the same component of B, add
+    them, and append the result to a new list C. C is the new
+    vector.
+  - Dot product: start a running sum at 0. For each position,
+    multiply the component of A by the matching component of B
+    and add the product to the sum. His example's dot product
+    is 80.
+  - Norm: start at 0, square each element of A and add it in,
+    then take the square root of the total. Same Pythagorean
+    formula as Lecture 4. His example's norm is 5.48.
+  - Example (added): a = [2, 6, 3] and b = [4, 1, 5].
+    - Sum: [2 + 4, 6 + 1, 3 + 5] = [6, 7, 8].
+    - Dot product: 2 times 4 + 6 times 1 + 3 times 5 = 8 + 6 +
+      15 = 29.
+    - Norm of a: square root of 4 + 36 + 9 = square root of 49
+      = 7.
+  - Code (added): the three loops, written tight.
+      import math
+      a,b = [2,6,3],[4,1,5] ## two same-length lists
+      c = [a[i]+b[i] for i in range(len(a))] ## sum, [6, 7, 8]
+      d = 0.0
+      for i in range(len(a)): d += a[i]*b[i] ## dot, 29.0
+      n = math.sqrt(sum(x**2 for x in a)) ## norm, 7.0
+  - What the loop is doing (added): each loop is the summation
+    sign from Lecture 1 made literal. The sigma says "for i from
+    1 to N, add this up." The for loop says the same thing with
+    a zero-based index. When the math and the code line up this
+    exactly, the math stops being scary. It is just a loop you
+    have not written yet.
+
+4. TWO PROBLEMS WITH LISTS
+  - His first problem: the operations require "an awful lot of
+    code to do something simple." The mathematical value of
+    vectors is that big complicated things get written in a
+    small space. He wants the same benefit in code.
+  - His second problem: for very large vectors the list code
+    slows down. The calculations take a while to resolve. He
+    says he will not get into the reasons why here.
+  - Why the slowdown happens, briefly (added): a Python list
+    holds general objects, and the interpreter checks each one's
+    type at every step of the loop. A million elements means a
+    million rounds of that overhead. The arithmetic is cheap.
+    The bookkeeping around it is not.
+
+5. NUMPY
+  - KEY TERM: NumPy: a widely used Python package for
+    representing vectors and other objects from linear algebra.
+    Usually abbreviated to np.
+  - His two reasons NumPy is great. It gives you the same kind of
+    abstraction you get when writing math on paper, and it is
+    much faster because of something called vectorized
+    computation, which removes the need for the for loops.
+  - KEY TERM: vectorized computation: doing an operation on a
+    whole array at once instead of looping over its elements
+    one at a time (added definition). You write a + b and the
+    library handles the loop below the surface.
+  - His explanation of why it is fast, offered with the caveat
+    that it is not a focus of the course: Python is a high-level
+    language, but what sits underneath its objects is written in
+    C. Every time Python code runs it drops down to C, does the
+    operation, and translates the result back up. NumPy spends
+    more time in C and bounces between the two languages less.
+  - His own escape hatch: "If that explanation didn't mean
+    anything to you, that's okay." You do not need to understand
+    vectorization for this course. NumPy is "clearly the better
+    tool" and it is what the course will use.
+  - The practical rule (added): if you find yourself writing a
+    for loop over the elements of a numeric array, stop and look
+    for the NumPy call that does it in one line. There almost
+    always is one.
+
+6. NUMPY ARRAYS
+  - Import the package and alias it: import numpy as np. He
+    says you will see this everywhere in example code.
+  - Build a vector by wrapping a list in np.array. Build one
+    programmatically with np.arange, NumPy's version of range,
+    which "operates very similarly."
+  - Printed, a NumPy array looks like a list. Its type is
+    different. Print type(a) and you get numpy.ndarray, not
+    list.
+  - KEY TERM: ndarray: NumPy's n-dimensional array type. A
+    vector is a one-dimensional ndarray, and Lecture 10 uses the
+    same type for matrices (added definition).
+  - Code (added):
+      import numpy as np
+      a,b = np.array([2,6,3]),np.array([4,1,5]) ## from lists
+      r = np.arange(3,8) ## [3 4 5 6 7], upper bound excluded
+      print(type(a)) ## <class 'numpy.ndarray'>
+
+7. VECTOR OPERATIONS IN NUMPY
+  - Addition: a + b. That gives the componentwise sum directly.
+  - Dot product: np.dot(a, b).
+  - Norm: NumPy has a linear algebra library built in, reached
+    as np.linalg, and the norm function lives there:
+    np.linalg.norm(a).
+  - His reaction to the side-by-side: "Look at how much less
+    code was required." Three loops became three calls.
+  - KEY TERM: np.linalg: NumPy's linear algebra sub-library.
+    The lecture uses norm here, and Lecture 10 uses eig from the
+    same place (added definition).
+  - Code (added): the same three results as section 3, no loops.
+      import numpy as np
+      a,b = np.array([2,6,3]),np.array([4,1,5])
+      print(a+b) ## [6 7 8]
+      print(np.dot(a,b)) ## 29
+      print(np.linalg.norm(a)) ## 7.0
+  - Two things to notice (added): a + b on arrays is
+    componentwise, but a + b on two Python lists concatenates
+    them into one longer list. Same symbol, different meaning,
+    which is why the type matters. And np.dot on two
+    one-dimensional arrays returns a plain number, matching
+    Lecture 5.
+
+8. THE SPEED BENCHMARK
+  - His setup: two functions. addListVectors takes two lists,
+    loops, appends into C, returns C. addNumpyVectors takes two
+    arrays and returns a + b. Each is just the earlier code
+    wrapped in a function. Then two list vectors A and B holding
+    the numbers from zero to a million, and two NumPy arrays
+    with exactly the same elements. The only difference between
+    the pairs is the type.
+  - KEY TERM: timeit: a Jupyter magic command, written with a
+    percent sign, that runs the code after it multiple times and
+    reports the average execution time. He says you do not need
+    to understand what a magic command is for this course.
+  - His results as stated in the recording: the list version
+    averaged 1.68 milliseconds over seven runs. The NumPy
+    version averaged 944 microseconds.
+  - His unit reminder: a millisecond is one thousandth of a
+    second. A microsecond is one millionth of a second.
+  - His conclusion: a huge speed up for exactly the same
+    mathematical function, just by using NumPy instead of a
+    list.
+  - Code (added): the same benchmark outside Jupyter, using the
+    timeit module instead of the magic. Times vary by machine.
+    The ratio is what to look at.
+      import timeit
+      import numpy as np
+      def addLists(x,y): return [x[i]+y[i] for i in range(len(x))]
+      def addArrays(x,y): return x+y ## vectorized
+      la,lb = list(range(200000)),list(range(200000))
+      na,nb = np.arange(200000),np.arange(200000)
+      t1 = timeit.timeit(lambda: addLists(la,lb), number=20)/20
+      t2 = timeit.timeit(lambda: addArrays(na,nb), number=20)/20
+      print("list %.2f ms numpy %.2f ms" % (t1*1e3, t2*1e3))
+    On the machine these notes were written on, 200,000-element
+    vectors added in about 7.9 ms with lists and about 0.43 ms
+    with NumPy, a ratio near 19 to 1. Your numbers will differ.
+    The direction will not.
+  - Why the ratio matters more than the times (added): the
+    benchmark is a single addition. Real work chains thousands
+    of them. A 10x or 20x gap per operation compounds into the
+    difference between a script that finishes over coffee and
+    one that finishes overnight.
+
+9. KEY TAKEAWAYS
+  - Lists can hold vectors, and for loops can do every vector
+    operation. It works, it is long, and it is slow at scale.
+  - NumPy arrays are the tool for this course. import numpy as
+    np, build with np.array or np.arange.
+  - a + b for componentwise sum, np.dot(a, b) for the dot
+    product, np.linalg.norm(a) for the norm. One call each.
+  - The type is numpy.ndarray, not list, even though it prints
+    like one.
+  - NumPy is fast because of vectorized computation: less
+    bouncing between Python and C. You do not need to understand
+    why, just use it.
+  - Million-element benchmark: milliseconds for lists,
+    microseconds for NumPy.
+
+10. QUIZ-SAFE FACTS
+  - Python lists are a natural candidate for representing
+    vectors. A large one can be built with range wrapped in
+    list.
+  - Componentwise operations on lists use a for loop over the
+    positions. Both vectors must be the same length.
+  - Dot product on lists: start at 0, multiply matching
+    components, add each product to the running sum. The
+    lecture's result was 80.
+  - Norm on lists: sum the squares, take the square root. The
+    lecture's result was 5.48.
+  - Two problems with lists: too much code for simple
+    operations, and slow for very large vectors.
+  - NumPy is abbreviated np and is widely used for vectors and
+    linear algebra objects. It uses vectorized computation and
+    removes the need for for loops.
+  - Python is a high-level language whose objects are
+    implemented underneath in C. NumPy is fast partly because it
+    spends more time in C.
+  - Vectorization is not a focus of the course.
+  - np.array wraps a list into an array. np.arange is NumPy's
+    version of range.
+  - The type of a NumPy vector is numpy.ndarray.
+  - Addition is a + b. Dot product is np.dot. Norm is
+    np.linalg.norm, from NumPy's built-in linear algebra
+    library.
+  - The percent sign in Jupyter marks a magic notebook cell
+    command. timeit runs the code multiple times (seven runs in
+    the lecture) and reports the average.
+  - Benchmark vectors: the numbers from zero to a million, as
+    lists and as NumPy arrays with identical elements.
+  - Times stated in the recording: 1.68 milliseconds for lists,
+    944 microseconds for NumPy.
+  - A millisecond is one thousandth of a second, a microsecond
+    is one millionth.

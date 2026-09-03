@@ -1,0 +1,228 @@
+1. WHAT THIS LECTURE COVERS
+  - The vector dot product: what it is, why it exists, and two
+    ways to compute it. The whole grocery equation collapses to
+    three symbols by the end.
+  - Along the way: the difference between the dot product and
+    elementwise multiplication, the double meaning of the dot
+    symbol, and the angle formula that explains what the dot
+    product measures.
+  - Practical framing (added): the dot product is "multiply
+    matching pairs, then add." Price times quantity summed over
+    a receipt. Weight times score summed over a rubric. It is
+    the single most-used operation in this course, and every
+    matrix product in Lectures 7 through 9 is a stack of them.
+
+2. THE GROCERY PROBLEM IN VECTORS
+  - Recap: $30 budget, combinations of grocery items with
+    different prices, spend it all.
+  - Two vectors, both of length 3. g encodes the amounts: first
+    component apples, second oranges, third bread loaves. c
+    encodes the costs: (2, 3, 5).
+  - His question: how can g and c represent the budget
+    equation? Look at the equation and what you see is each
+    vector's components multiplied pairwise, then summed. First
+    component of c times first component of g, plus second times
+    second, plus third times third.
+
+3. THE DOT PRODUCT DEFINED
+  - This operation happens so often it gets a name.
+  - KEY TERM: vector dot product: the sum of the componentwise
+    products of two vectors. Written c . g with a small dot. In
+    summation form, the sum over i of c_i times g_i.
+  - The notation, in his words: the arrows on top say c and g
+    are vectors. The subscript i says you are talking about the
+    ith component of each, which is a number, not a vector.
+    i = 1 gives the first components multiplied, i = 2 the
+    second, and so on.
+  - The payoff: the whole budget equation becomes 30 = c . g.
+    "The same exact information," shortened again.
+  - The result of a dot product is a single number (added). Two
+    vectors go in, one scalar comes out. That is worth saying
+    out loud because the next operation returns a vector, and
+    mixing the two up is the standard beginner error.
+  - Example (added): a coffee cart's cost vector is c =
+    (3, 4, 2) for bagels, coffees, muffins. An order is g =
+    (2, 1, 4).
+    - Pairwise products: 3 times 2 = 6, 4 times 1 = 4, 2 times
+      4 = 8.
+    - Sum: 6 + 4 + 8 = 18.
+    - c . g = 18. The order costs $18. That is the receipt total
+      in one operation.
+  - Why the definition is shaped this way (added): a linear
+    equation is a sum of number-times-variable terms. Put the
+    numbers in one vector and the variables in another and the
+    equation is, by construction, a dot product. The dot product
+    was not invented and then found useful. It is the linear
+    equation with the two kinds of information pulled apart.
+
+4. ONE DOT, TWO MEANINGS
+  - He flags a confusion. The dot symbol is doing two jobs. On
+    the left, c . g between two vectors means the vector dot
+    product. On the right, c_i . g_i between two components
+    means the usual multiplication of two numbers.
+  - His words: "this double usage of notation, it's confusing,
+    it's a little unfortunate."
+  - How to keep it straight (added): look at what is on either
+    side of the dot. Arrows on top, or a whole list?
+    Vector dot product, result is a number. Subscripts, or plain
+    numbers? Ordinary multiplication. In code there is no
+    ambiguity: np.dot for the first, * between scalars for the
+    second.
+
+5. ELEMENTWISE MULTIPLICATION
+  - The confusion raises a question: what about a more natural
+    vector multiplication, one that produces a new vector by
+    multiplying the components? That exists.
+  - KEY TERM: elementwise multiplication: multiply the two
+    vectors component by component and keep the results as a
+    new vector of the same length. Written with an asterisk,
+    c * g, to keep it apart from the dot product.
+  - For c and g of length 3, c * g is a new vector of size 3
+    whose entries are the three pairwise products.
+  - His demo: two vectors a (red) and b (blue) with sliders for
+    each x and y coordinate, and their elementwise product in
+    black. See the visualizeElementProduct widget in Lecture 5
+    (notebook section "Vector Dot Products").
+  - His observation: it is a little hard to describe
+    geometrically, but the black vector can grow pretty quickly,
+    "as you would expect, multiplicatively," as the components
+    get larger.
+  - Example (added): c = (3, 4, 2) and g = (2, 1, 4) again.
+    - c * g = (3 times 2, 4 times 1, 2 times 4) = (6, 4, 8).
+    - Still a vector. Each entry is one line item's subtotal:
+      $6 of bagels, $4 of coffee, $8 of muffins.
+  - Reading the two side by side (added): elementwise
+    multiplication is the itemized receipt. The dot product is
+    the total at the bottom. Same numbers, one keeps the lines,
+    the other adds them up.
+
+6. DOT PRODUCT AS THE SUM OF THE ELEMENTWISE PRODUCT
+  - The relationship he draws: the dot product is just the sum
+    of the elementwise products. Notationally, he writes it with
+    vertical bars around c * g to mean "the sum of that vector."
+    c . g = |c * g|.
+  - The chain: elementwise multiplication gives a vector of the
+    same length as c and g. Add up its entries. That sum is the
+    dot product. "You can see why it's equivalent."
+  - The second demo adds the norms of a and b and the dot
+    product a . b to the legend. The dot product is computed
+    exactly this way, elementwise product then sum. See the
+    visualizeDotProduct widget in the same notebook section.
+  - His warning from the demo: it is difficult to see the
+    relationship between the lengths of a and b and the dot
+    product. It is not simply the norms multiplied together.
+    Something else is going on.
+  - Code (added): both operations on the coffee cart vectors.
+      import numpy as np
+      c,g = np.array([3,4,2]),np.array([2,1,4]) ## costs, order
+      print(c*g) ## [6 4 8], elementwise
+      print(np.sum(c*g), np.dot(c,g)) ## 18 18, dot both ways
+
+7. THE ANGLE FORMULA
+  - The second way to write the dot product: a . b equals the
+    norm of a times the norm of b times the cosine of theta,
+    where theta is the angle between a and b. He says the
+    derivation comes from trigonometry and right triangles, and
+    he is not going to spend time on it.
+  - KEY TERM: theta: the angle between the two vectors, measured
+    at the origin where both arrows start (added definition).
+  - His description of cosine: it tells you the size of the
+    angle horizontally across from the 90 degrees in a right
+    triangle. Visually, imagine a right triangle wedged between
+    a and b, with the angle between them at the corner.
+  - His interpretation, the sentence to memorize: the dot
+    product is the length of the first vector times the length
+    of the second vector, "penalized by how aligned or not
+    aligned the two vectors are." The cosine is the alignment
+    share that weights the product of the lengths.
+  - What cosine does as a number (added): it runs from 1 (angle
+    zero, same direction) down through 0 (angle 90, no shared
+    direction) to -1 (angle 180, opposite directions). So the
+    dot product is the full product of the lengths when the
+    vectors agree, nothing when they are perpendicular, and
+    negative when they point against each other.
+  - The demo changes knobs: instead of x and y components, you
+    set each vector's angle and norm. The plot reports the norms,
+    theta, the cosine, and the dot product. See the
+    visualizeDotProduct2 widget in the same notebook section.
+  - Example (added): a = (3, 0) and b = (2, 2).
+    - Component way: 3 times 2 + 0 times 2 = 6.
+    - Angle way: ||a|| = 3. ||b|| = square root of 8, about
+      2.828. The angle between them is 45 degrees (a lies on the
+      x axis, b sits halfway between the axes), and cos 45 is
+      about 0.707. Multiply: 3 times 2.828 times 0.707 = 6.0.
+    - Same answer by two roads. The component way is what you
+      compute. The angle way is what it means.
+
+8. THE TWO EXTREME CASES
+  - No alignment: set the angle between a and b to 90 degrees.
+    They share no directionality, so the cosine is 0, so the dot
+    product is 0 no matter how long or short the vectors are.
+    He makes them big and small on the slider to show the dot
+    product stays at zero.
+  - Perfect alignment: give both vectors the same angle. The
+    cosine is 1 and the dot product is the product of the norms.
+    His demo values: length of a set to 1, length of b is 2.4,
+    dot product is 1 times 2.4 times 1, which is 2.4.
+  - KEY TERM: perpendicular: at 90 degrees to each other, also
+    called orthogonal. Two perpendicular vectors always have a
+    dot product of zero (added definition). This fact comes back
+    hard in Lecture 8.
+  - Example (added): a = (3, 0) and b = (0, 5). One lies flat
+    along x, the other stands straight up along y. Dot product:
+    3 times 0 + 0 times 5 = 0. Lengths 3 and 5, alignment none,
+    result zero.
+  - Example (added): a = (1, 2) and b = (3, 6). b is a scaled
+    up by 3, so they point the same way. Dot product: 1 times 3
+    + 2 times 6 = 15. Norms: square root of 5 (about 2.236) and
+    square root of 45 (about 6.708). Product of norms: 15.0.
+    Cosine 1, full credit.
+  - Example (added): a = (2, 1) and b = (-1, 2). Dot product:
+    -2 + 2 = 0. Perpendicular, even though neither one lies on
+    an axis. The dot product finds the right angle without a
+    protractor.
+  - Practical reading (added): the dot product is a similarity
+    score. Large and positive means the two vectors mostly
+    agree. Zero means unrelated directions. Negative means they
+    oppose. That reading is exactly how it gets used later in
+    data work, when the vectors are rows of features instead of
+    grocery prices.
+
+9. KEY TAKEAWAYS
+  - Dot product: multiply matching components, add them up. Two
+    vectors in, one number out. Written c . g.
+  - The grocery budget is 30 = c . g. Costs dotted with counts.
+  - The dot symbol means vector dot product between vectors and
+    plain multiplication between components. Watch the context.
+  - Elementwise multiplication (asterisk) multiplies matching
+    components and keeps the vector. Sum that vector and you
+    have the dot product.
+  - Angle form: a . b = ||a|| ||b|| cos(theta). Product of the
+    lengths, weighted by alignment.
+  - 90 degrees apart: dot product zero, regardless of length.
+    Same angle: dot product equals the product of the norms.
+
+10. QUIZ-SAFE FACTS
+  - g is the amounts vector (apples, oranges, bread), c is the
+    cost vector (2, 3, 5). Both length 3.
+  - The vector dot product is the sum of the componentwise
+    products, written with a dot: c . g = sum of c_i times g_i.
+  - The budget equation in vector form: 30 = c . g.
+  - The subscript i denotes a component (a number), the arrow
+    on top denotes a vector.
+  - The dot has two meanings: vector dot product between vectors,
+    ordinary multiplication between components. The professor
+    calls this confusing and unfortunate.
+  - Elementwise multiplication is written with an asterisk and
+    returns a vector of the same length.
+  - The dot product equals the sum of the elementwise product,
+    written with vertical bars: c . g = |c * g|.
+  - Angle formula: a . b = ||a|| times ||b|| times cos(theta),
+    theta the angle between a and b. It comes from trigonometry
+    and right triangles.
+  - Interpretation: the product of the two lengths penalized by
+    how aligned the vectors are.
+  - Angle 90 degrees: cosine 0, dot product 0 regardless of the
+    lengths. Same angle: cosine 1, dot product equals the product
+    of the norms. Demo values: lengths 1 and 2.4, dot product
+    2.4.

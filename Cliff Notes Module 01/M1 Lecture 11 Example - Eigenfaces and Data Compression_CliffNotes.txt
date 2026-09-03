@@ -1,0 +1,200 @@
+1. WHAT THIS LECTURE COVERS
+  - The reason for three lectures of eigenvector work: eigenvectors
+    find redundant information in a big dataset, and redundant
+    information can be thrown away. That is compression.
+  - The demonstration is eigenfaces: a photo of a face stored as a
+    matrix, squeezed down to a much smaller matrix with principal
+    component analysis, then rebuilt.
+  - Scope, in the professor's own words: this section is just an
+    example. It probably will not be covered on homeworks or on the
+    final exam, and a future machine learning course covers it in
+    greater detail.
+
+2. WHY BOTHER
+  - Eigenvectors represent a convenient way to cluster large
+    datasets by identifying redundant information.
+  - If you can identify redundant information in a large dataset,
+    you can possibly compress the amount of space needed to store
+    that data.
+  - Where you will see it next: principal component analysis, in
+    the machine learning course. Eigenvectors and eigenvalues
+    emerge naturally there.
+  - Practical framing (added): if two columns of your data always
+    move together, you are paying to store the same fact twice.
+    Eigenvectors find the directions where the data really
+    varies, and the eigenvalues rank those directions by how much
+    variation lives along each one. Keep the big ones, drop the
+    rest, and most of the picture survives.
+
+3. THE DATASET: A FACE AS A MATRIX
+  - The example dataset is an image, a black and white photo of
+    former US President George W. Bush, represented as a
+    rectangular matrix of real values.
+  - KEY TERM: scikit-learn (sklearn): a very useful Python package
+    for machine learning. It also ships a set of standardized
+    datasets that people use as teaching examples and as benchmarks
+    when comparing one algorithm against another.
+  - One of those datasets is a collection of famous people's faces.
+    The Bush image comes from it.
+  - The image object is just a matrix: 62 rows by 47 columns, each
+    number between zero and one, telling imshow how black or how
+    white that cell should be. It is drawn with a color map called
+    bone. See the face and the printed matrix in the Lecture 11
+    notebook section "Example Eigenfaces and Data Compression".
+  - Tie back to Lecture 7 (added): the flower was a 3-layer tensor
+    because it was in color. A grayscale image needs only one layer,
+    so it is a plain two dimensional matrix, and every matrix trick
+    from this module applies to it directly.
+
+4. WHAT PCA DOES
+  - KEY TERM: principal component analysis (PCA): an algorithm that
+    uses a matrix's eigenvectors to capture its prevailing patterns
+    and compress it into a smaller matrix. Not vital to understand
+    in full for this course.
+  - The lecture's step by step:
+      1. Hand PCA a matrix of data. It need not be square. Lots of
+         rows and few columns is common.
+      2. PCA looks at every pair of columns and asks how correlated
+         they are. From those pairwise correlations it builds a
+         square matrix. The lecture calls this the covariance
+         matrix.
+      3. Compute that square matrix's eigenvectors and eigenvalues.
+      4. The eigenvectors with the largest eigenvalues identify the
+         dimensions along which most of the information in the
+         dataset is occurring.
+      5. Keep some number of those top eigenvectors and throw out
+         the rest, projecting the big matrix down to a smaller one
+         with fewer dimensions.
+  - KEY TERM: correlation: how strongly two columns move together
+    (added definition, the lecture defers the full definition to a
+    later class).
+  - The notebook's markdown adds a few facts the recording only
+    gestures at: the axes PCA finds are the eigenvectors, they are
+    orthogonal to each other, each eigenvalue is the amount of
+    variance along its eigenvector, and the eigenvector with the
+    highest eigenvalue is the first principal component, the
+    second highest is the second, and so on.
+  - Why the covariance matrix is square and symmetric (added):
+    one row and one column per data column, and the entry for
+    columns i and j is the same as for j and i. That symmetry is
+    exactly the Lecture 8 condition, which is why the eigenvectors
+    come out perpendicular and form a clean new coordinate system,
+    the eigenspace, for the data.
+
+5. COMPRESS DOWN, PROJECT BACK UP
+  - The demo has a slider for the number of eigenvectors. The
+    original image is 62 by 47. Using n eigenvectors projects it
+    down to a matrix that is 62 by n.
+  - With just the first two eigenvectors, the result is 62 by 2,
+    which the lecture reports as about 4 percent of the size of the
+    original matrix. A very big compression, and a ton of data
+    thrown out.
+  - The small matrix plus the PCA algorithm can then be projected
+    back up to the 62 by 47 space. Some information is lost on the
+    way.
+  - What the two-eigenvector rebuild looks like: pretty blurry, not
+    a whole lot like the original face, but with recognizable
+    elements. Dark blobs roughly where the eyes go, a vertical
+    stripe where the nose should be, dark blobs for nostrils, a
+    horizontal line for the mouth. What gets recovered is the major
+    patterns in the image. See the side by side original and
+    compressed images under the slider in the Lecture 11 notebook.
+  - The code shape in the notebook (added, the lecture runs it
+    without narrating it):
+      from sklearn.decomposition import PCA
+      pca = PCA(n_components=n) ## keep n eigenvectors
+      small = pca.fit(bush).transform(bush) ## 62 by n
+      rebuilt = pca.inverse_transform(small) ## back to 62 by 47
+    fit finds the eigenvectors, transform projects down, and
+    inverse_transform projects back up.
+
+6. HOW MUCH IS LOST
+  - Slide the count up. With three, four, or five eigenvectors the
+    compressed image looks more and more like the original face.
+  - Around 10 to 15 eigenvectors the images are pretty close to the
+    original, at least to the human eye.
+  - The lecture's closing setting: 14 eigenvectors, the 14
+    corresponding to the 14 largest eigenvalues of the covariance
+    matrix. That projects 62 by 47 down to 62 by 14, about 30
+    percent as much data as the start. Still a really big
+    reduction, and the rebuilt face is visibly pretty similar.
+  - The arithmetic behind the percentages (added): the compressed
+    matrix keeps all 62 rows and n of the 47 columns, so the ratio
+    is n over 47. Two over 47 is about 4 percent. Fourteen over 47
+    is about 30 percent. The number of rows cancels out.
+  - Rule of thumb (added): eigenvalues usually drop off fast. The
+    first few carry most of the variance, the tail carries noise
+    and fine detail. The slider is a dial between file size and
+    blur, and the eigenvalues tell you where the dial stops paying
+    off.
+
+7. A SMALL VERSION YOU CAN RUN (added)
+  - The whole pipeline in NumPy on a matrix small enough to read,
+    using only functions from this module. Six readings from three
+    sensors on the same machine, where sensor two reads about one
+    degree above sensor one and sensor three reads about double.
+    Three columns, but really one piece of information.
+      import numpy as np
+      X = np.array([[10,11,21],[12,13,24],[11,12,22],[14,16,28],[13,14,27],[15,16,30]],float)
+      Xc = X-X.mean(axis=0) ## center each column on its mean
+      vals,vecs = np.linalg.eig(np.dot(Xc.T,Xc)/(len(X)-1)) ## covariance, then eigen
+      w = vecs[:,[np.argmax(vals)]] ## keep the top eigenvector only
+      Xhat = np.dot(np.dot(Xc,w),w.T)+X.mean(axis=0) ## down to 6 by 1, back to 6 by 3
+      print(np.sort(vals)[::-1].round(2), np.abs(Xhat-X).max().round(2))
+  - What comes out:
+      eigenvalues, largest first: 20.21, 0.19, 0.03
+      share of total variance:    98.9%, 0.9%, 0.1%
+      biggest rebuild error with one eigenvector: 0.62
+      biggest rebuild error with two eigenvectors: 0.15
+  - Reading it: one eigenvector carries 98.9 percent of the
+    variation in three columns. Keeping it stores 6 numbers instead
+    of 18, a third of the space, and the rebuilt readings are
+    within 0.62 of the originals everywhere. That is the face demo
+    with numbers you can check by hand.
+  - The covariance matrix here is 3 by 3 and symmetric, so its
+    three eigenvectors are perpendicular, per Lecture 8. The
+    largest eigenvalue's eigenvector is the direction all three
+    sensors move together. The other two are the tiny
+    disagreements between them.
+
+8. KEY TAKEAWAYS
+  - Eigenvectors find redundant information. Redundant information
+    can be dropped, which is compression.
+  - A grayscale image is a plain matrix. The example face is 62 by
+    47 with values from zero to one.
+  - PCA builds a square covariance matrix from the column-pair
+    correlations, takes its eigenvectors and eigenvalues, and keeps
+    the eigenvectors with the largest eigenvalues.
+  - Keeping n eigenvectors projects 62 by 47 down to 62 by n. Two
+    gives about 4 percent of the data and a blurry face. Fourteen
+    gives about 30 percent and a face that looks right.
+  - Projecting back up always loses something. The eigenvalues say
+    how much.
+
+9. QUIZ-SAFE FACTS
+  - The professor states this section probably will not be on
+    homeworks or the final exam and belongs to a future machine
+    learning course.
+  - Eigenvectors cluster large datasets by identifying redundant
+    information, which allows compression.
+  - The example image is former US President George W. Bush from a
+    scikit-learn (sklearn) faces dataset.
+  - sklearn is a Python package for machine learning that also
+    provides standardized datasets used for teaching and
+    benchmarking.
+  - The image is a 62 by 47 matrix of numbers between zero and one,
+    drawn with imshow and the color map bone.
+  - PCA: correlation between every pair of columns forms a square
+    matrix (the covariance matrix), whose eigenvectors and
+    eigenvalues are computed. The eigenvectors with the largest
+    eigenvalues identify where most of the information occurs.
+  - Two eigenvectors project 62 by 47 down to 62 by 2, about 4
+    percent of the original size.
+  - Fourteen eigenvectors give 62 by 14, about 30 percent of the
+    original data.
+  - Around 10 to 15 eigenvectors the rebuilt image is pretty close
+    to the original to the human eye.
+  - Projecting back up to 62 by 47 loses some information. The two
+    eigenvector rebuild is blurry with dark blobs for eyes, a
+    vertical stripe for the nose, blobs for nostrils, and a
+    horizontal line for the mouth.

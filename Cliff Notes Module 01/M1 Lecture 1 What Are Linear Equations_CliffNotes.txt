@@ -1,0 +1,245 @@
+1. WHAT THIS LECTURE COVERS
+  - The professor's opening definition: linear algebra is the
+    study of linear systems and linear equations. He calls it a
+    circular definition and says it is not much help until you
+    see examples of what "linear," "equation," and "system" mean.
+  - The plan for the module: walk through example scenarios of
+    linear systems, see how they capture real-world problems,
+    then define the tools (vectors, matrices, and so on) that
+    make up linear algebra.
+  - This lecture builds one scenario, the fruit stand, and uses
+    it to introduce four things: the linear equation, the
+    summation shorthand, solving for one variable in terms of
+    another, and the slope-intercept form of a line.
+  - Practical framing (added): a linear equation is the simplest
+    possible model of a constraint. A budget, a capacity, a
+    weight limit. If you have ever written a spreadsheet cell
+    that multiplies quantities by unit prices and sums them, you
+    have written one.
+
+2. THE FRUIT STAND SCENARIO
+  - The setup as the professor gives it: you are sent to a fruit
+    stand with $30. You must spend all $30. Apples cost $2 each
+    and oranges cost $3 each. Which combinations of apples and
+    oranges use up the budget exactly?
+  - Two simplifications he insists on. First, you must spend all
+    the money, not some of it. Second, fractional groceries are
+    allowed, so one and a half apples is a legal purchase. He
+    calls the whole thing "very contrived" and made up. The
+    fractional rule is what makes the math clean.
+  - Why the rules matter (added): "spend all of it" turns an
+    inequality (spend at most $30) into an equation (spend
+    exactly $30). "Fractions allowed" means the variables live on
+    a continuous number line instead of on the integers. Both
+    rules are there so that the answer is a line, not a scatter
+    of dots.
+  - His first pass at writing the scenario down is the long form:
+    $30 = ($2 x apples) + ($3 x oranges), where the italic words
+    apples and oranges stand for the number purchased.
+
+3. VARIABLES AND NOTATION
+  - KEY TERM: variable: a symbol standing for some number or some
+    other mathematical object. The lecture writes variables in
+    italics. Sometimes a full word (apples), sometimes a single
+    letter (x or y are the common ones). The italics are the hint
+    that you are looking at a variable rather than a label.
+  - He then strips the equation down. Three moves:
+    - The multiplication x becomes a dot. "2 . apples" reads as
+      two times the number of apples.
+    - The dollar signs go away. It is understood that 30 means
+      $30 and 2 means $2 per apple.
+    - The parentheses go away.
+  - Result: 30 = 2.apples + 3.oranges. Fewer characters, same
+    equation. He is explicit that this is mathematically the
+    same statement as the long form.
+  - Why he bothers (added): the notation shrink is not
+    cosmetic. Every later object in this module (summations,
+    vectors, dot products, matrices) is a further compression of
+    the same "number times variable, added up" pattern. Getting
+    comfortable with the terse form now makes the later
+    shorthands feel like the next obvious step instead of a new
+    language.
+
+4. THE GENERAL LINEAR EQUATION
+  - KEY TERM: linear equation: any equation of the form
+    y = a_1.x_1 + a_2.x_2 + a_3.x_3 + ... + a_N.x_N.
+    The left side is one value. The right side is as many terms
+    as you like, every one of them a number times a variable,
+    all added together.
+  - Mapping the fruit stand onto the pattern:
+    - y is the total, the $30 budget. y = 30.
+    - x_1 is the number of apples, x_2 is the number of oranges.
+    - a_1 is the cost of item 1 ($2 per apple), a_2 is the cost
+      of item 2 ($3 per orange).
+  - The pattern scales. More grocery items means more
+    number-times-variable terms, one per item. Nothing else
+    changes.
+  - What "linear" rules out (added): no variable is squared, no
+    two variables are multiplied together, no variable sits
+    inside a square root or a sine. Each variable appears once,
+    multiplied by a plain number. That is the whole restriction,
+    and it is why the graph comes out straight.
+  - The x_i and a_i notation (added): the subscript i is just an
+    index, a slot number. x_3 means "the third variable," a_3
+    means "the number multiplying the third variable." When the
+    professor says "these a's" and "these x's" he means the
+    whole family of them.
+
+5. THE SUMMATION SHORTHAND
+  - The right side of the general equation repeats one pattern:
+    a number times a variable, plus a number times a variable,
+    and so on. The professor introduces "this big Epsilon thing"
+    (the capital sigma symbol, added) as a way to write the
+    repetition once.
+  - KEY TERM: summation: the sigma notation that says "add up the
+    following expression for every value of i from a start to an
+    end." y = sum from i=1 to N of a_i.x_i.
+  - How to read it, in his words: start with i=1, that gives you
+    a_1.x_1. Then i=2 gives a_2.x_2. Then i=3 gives a_3.x_3. Keep
+    going up to i=N, which gives a_N.x_N. Add all of them. The
+    big long equation from section 4 is now one short line.
+  - He says this notation will come back to represent big
+    equations in a small space.
+  - Example (added): a coffee cart sells bagels at $3 and coffees
+    at $4, and you have exactly $24 to spend. The linear equation
+    is 24 = 3.bagels + 4.coffees. In summation form, with x_1 =
+    bagels, x_2 = coffees, a_1 = 3, a_2 = 4, and N = 2, it is
+    24 = sum from i=1 to 2 of a_i.x_i. Unrolling: i=1 gives
+    3.bagels, i=2 gives 4.coffees, sum them, done. For two items
+    the sigma saves nothing. For two hundred it saves a page.
+  - Code (added): the summation is a loop, and NumPy's sum of an
+    elementwise product is the same loop without writing it.
+      import numpy as np
+      a,x = np.array([3,4]),np.array([4,3]) ## prices, counts
+      print(np.sum(a*x)) ## 24, the unrolled summation
+
+6. HOW MANY SOLUTIONS, AND REARRANGING THE EQUATION
+  - The question: how many apple-and-orange combinations satisfy
+    30 = 2.apples + 3.oranges? The answer: infinitely many.
+  - The reason you can see it is by rewriting the equation with
+    a little algebra. His rule for algebra, stated plainly:
+    whatever you do to one side of the equals sign, you must do
+    to the other side, or the two sides stop being equal.
+  - His two steps:
+    - Subtract 2.apples from both sides. Now the apples term is
+      on the left with the 30.
+    - Divide both sides by 3. The 30 becomes 30/3, which is 10.
+      The 2.apples becomes 2/3.apples. The 3.oranges becomes
+      oranges, because 3/3 is 1 and the 1 is not written.
+  - Result: oranges = 10 - 2/3.apples. Tell him the number of
+    apples and this equation tells you the number of oranges
+    that spends the budget exactly.
+  - Why infinitely many (added): apples can be any number from 0
+    up to 15 (fractions included), and each choice produces
+    exactly one oranges value. A continuous range of inputs
+    gives a continuous range of solutions. Infinite.
+  - His check: buy 3 apples and the equation says 8 oranges.
+    3 apples at $2 is $6, 8 oranges at $3 is $24, total $30.
+  - Example (added): the coffee cart again, 24 = 3.bagels +
+    4.coffees. Solve for coffees the same way.
+    - Subtract 3.bagels from both sides: 24 - 3.bagels =
+      4.coffees.
+    - Divide both sides by 4: 6 - 3/4.bagels = coffees.
+    - Check with 4 bagels: 6 - 3/4 of 4 = 6 - 3 = 3 coffees.
+      4 bagels at $3 is $12, 3 coffees at $4 is $12. Total $24.
+    - Check with 0 bagels: 6 coffees, $24. Check with 8 bagels:
+      0 coffees, $24. Every bagel count in between works too.
+  - Practical reading (added): "oranges depends on apples" is
+    the sentence to hold onto. The professor says it is because
+    the budget is fixed, must be fully spent, and fractions are
+    allowed. Rearranging an equation so one variable sits alone
+    on the left is the same move you make when you solve any
+    formula for the unknown you care about. Nothing new, just
+    named.
+
+7. SLOPE AND INTERCEPT
+  - The rearranged equation has the general form y = b + m.x.
+    The professor says this is a really common way of
+    representing a straight line.
+  - KEY TERM: slope: the m in y = b + m.x. It tells you how y
+    changes when x changes a little bit.
+  - KEY TERM: intercept: the b in y = b + m.x. It tells you what
+    y is when x is zero. Set x to zero, the m.x term is zero, and
+    b is what is left over.
+  - For the fruit stand, m = -2/3 and b = 10. His reading of
+    each: m says that every additional apple means 2/3 of an
+    orange less. b says that with zero apples you buy 10 oranges
+    at $3 each to use up the $30.
+  - Example (added): the coffee cart, coffees = 6 - 3/4.bagels.
+    - m = -3/4. Each extra bagel costs you three quarters of a
+      coffee.
+    - b = 6. Zero bagels means six coffees, $24 exactly.
+    - Sanity check on the sign: the slope is negative because
+      the budget is fixed. More of one thing forces less of the
+      other. A positive slope would mean buying more bagels
+      somehow let you buy more coffee too, which a fixed budget
+      cannot do.
+  - Why m is a fraction of the prices (added): m = -(price of
+    x) / (price of y). Each bagel eats $3 of budget, and each $4
+    of budget is one coffee, so one bagel displaces 3/4 of a
+    coffee. The slope is the exchange rate between the two
+    items. Same for the fruit stand: -2/3 is $2 per apple over
+    $3 per orange.
+
+8. WHAT "LINEAR" MEANS
+  - Plot the equation with apples on the horizontal axis and
+    oranges on the vertical axis and you get a straight line.
+    That is what linear means in this example. See the plot and
+    the slider widget in Lecture 1 (notebook section "Example 1:
+    The Fruitstand," the visualize function).
+  - The widget moves a point along the line as you change the
+    number of apples. His observation: for each new apple, the
+    allowed oranges drop by about 2/3. The line is straight
+    because that drop is the same everywhere along it.
+  - The test for linearity in one sentence (added): the change
+    in y for one step in x is the same no matter where you
+    start. Constant slope means straight line means linear.
+  - Code (added): reproduce the shape with the coffee cart.
+      import numpy as np
+      import matplotlib.pyplot as plt
+      b = np.linspace(0,8,50) ## bagel counts, 0 to 8
+      plt.plot(b,6-0.75*b) ## coffees as a line
+      plt.xlabel("bagels")
+      plt.ylabel("coffees")
+
+9. KEY TAKEAWAYS
+  - Linear algebra is the study of linear systems and linear
+    equations. The definition is circular, the examples are the
+    real definition.
+  - A linear equation is y = a_1.x_1 + a_2.x_2 + ... + a_N.x_N.
+    Numbers times variables, added up. That pattern is the
+    entire subject in miniature.
+  - The sigma summation is the shorthand for that repeating
+    pattern.
+  - A single linear equation in two unknowns has infinitely many
+    solutions. Rearrange it to see one variable as a function of
+    the other.
+  - Whatever you do to one side of the equals sign, do to the
+    other.
+  - y = b + m.x is a straight line. m is the slope (how y moves
+    per unit of x), b is the intercept (y when x is zero).
+  - Linear means the plot is a straight line.
+
+10. QUIZ-SAFE FACTS
+  - Professor's definition: linear algebra is the study of
+    linear systems and linear equations.
+  - Fruit stand rules: $30 budget, must spend all of it, apples
+    $2 each, oranges $3 each, fractional groceries allowed.
+  - Italics denote variables. A variable represents some number
+    or other mathematical object.
+  - The dot replaces the multiplication x. Dollar signs and
+    parentheses are dropped for simplicity.
+  - General linear equation: y = a_1.x_1 + a_2.x_2 + ... +
+    a_N.x_N. y is the total (budget), x_i is the amount of item
+    i, a_i is the cost of item i.
+  - The capital sigma is called a summation. It adds a_i.x_i for
+    i from 1 to N.
+  - The fruit stand equation has infinitely many solutions.
+  - Rearranged: oranges = 10 - 2/3.apples. Three apples means
+    eight oranges.
+  - Straight line form: y = b + m.x. m is the slope, b is the
+    intercept. For the fruit stand, m = -2/3 and b = 10.
+  - Zero apples means 10 oranges. Each additional apple means
+    2/3 of an orange less.
+  - Plotting apples against oranges gives a straight line, hence
+    "linear."

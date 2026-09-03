@@ -1,0 +1,190 @@
+1. WHAT THIS LECTURE COVERS
+  - The idea of an eigenvector: a vector that a matrix does not
+    rotate. And its eigenvalue: how much the matrix stretches or
+    shrinks that vector.
+  - Why anyone cares: for symmetric matrices, the eigenvectors form
+    a new coordinate system, the eigenspace, that describes data in
+    its natural coordinates. Lecture 9 shows how to find them,
+    Lecture 11 shows what they buy you.
+
+2. THE OBSERVATION THAT STARTS IT
+  - Sometimes it is helpful to find the vectors that remain
+    unchanged by a linear transformation. The lecture shows this
+    with the shear matrix from Lecture 7.
+  - Recap of the setup: each choice of a and b gives a different
+    matrix M, and M acts on the matrix of scatter points by the
+    matrix dot product. Varying a shears horizontally, varying b
+    shears vertically.
+  - The observation: as b varies, M changes every time the slider
+    moves, but the blue reference vector does not change. Its angle
+    stays put no matter what b is. See the shear widget in the
+    Lecture 8 notebook section "Eigenvectors & Eigenvalues" and
+    watch the blue arrow while moving b.
+  - That is the type of thing being hunted: a vector such that when
+    the matrix acts on it, the vector does not rotate at all.
+
+3. THE DEFINITION
+  - KEY TERM: eigenvector: a vector v is an eigenvector of the
+    matrix M if v does not rotate when M acts on it. The dot
+    product of M and v is a new vector with the same exact angle
+    as v. It can shrink or grow along that original axis, but it
+    cannot turn.
+  - Written as an equation:
+        M . v = lambda * v
+    The left side is M acting on v. The right side is v scaled by
+    some number lambda.
+  - KEY TERM: eigenvalue: the scalar lambda in that equation. It is
+    the amount of shrinking or growing that happens to v when M
+    acts on v. Lambda is the eigenvalue corresponding to the
+    eigenvector v.
+  - Reading the equation in words (added): "M does to v exactly
+    what multiplying by the number lambda does." A whole grid of
+    numbers collapses to one number, but only for that special
+    direction.
+  - Example (added), a matrix that stretches x by 3 and y by 2:
+        M = [[3, 0],
+             [0, 2]]
+      M . (1, 0) = (3, 0)  which is 3 * (1, 0)
+      M . (0, 1) = (0, 2)  which is 2 * (0, 1)
+      M . (1, 1) = (3, 2)  which is not any number times (1, 1)
+    So (1,0) is an eigenvector with eigenvalue 3, (0,1) is an
+    eigenvector with eigenvalue 2, and (1,1) is not an eigenvector
+    at all: it came out pointing somewhere new. Two directions
+    survive untouched, every other direction gets turned (added).
+  - Code (added):
+      import numpy as np
+      M = np.array([[3,0],[0,2]])
+      for v in ([1,0],[0,1],[1,1]): print(v,'->',np.dot(M,v)) ## which ones keep their angle
+  - Eigenvalues can be negative or fractional (added). Negative
+    means the vector flips to point the opposite way along the same
+    line. It still satisfies M . v = lambda * v, so it is still an
+    eigenvector: the line it lives on is unchanged, only the length
+    and the sign moved. Lecture 10's example has one. A fraction
+    below one means it shrinks.
+
+4. SYMMETRIC MATRICES
+  - Certain types of matrices yield eigenvectors and eigenvalues
+    with really useful properties for describing the matrix as a
+    function. The lecture's case is the symmetric matrix.
+  - KEY TERM: symmetric matrix: the top right triangle of the
+    matrix is the mirror image of the bottom left triangle. Draw a
+    line from the top left corner to the bottom right corner, flip
+    the top right triangle over that line, and it lines up with the
+    bottom left.
+  - The lecture's picture is a 4 by 4 with letters, where the same
+    letter appears in mirrored positions on either side of the
+    diagonal. See the colored 4 by 4 in the Lecture 8 notebook
+    right after the eigenvector definition.
+  - Example (added), a 3 by 3 that is symmetric:
+        [[1, 4, 7],
+         [4, 2, 9],
+         [7, 9, 3]]
+    The 4 sits at row 1 column 2 and again at row 2 column 1. The 7
+    and the 9 mirror the same way. The diagonal (1, 2, 3) can be
+    anything, it is its own mirror image. Change the bottom left 7
+    to an 8 and the matrix is no longer symmetric (added).
+  - Practical framing (added): symmetric matrices show up whenever
+    a grid records a relationship that runs both ways. A distance
+    table between cities is symmetric because the distance from A
+    to B equals the distance from B to A. The covariance matrix in
+    Lecture 11 is symmetric for the same reason.
+
+5. THE PAYOFF: PERPENDICULAR EIGENVECTORS
+  - A symmetric n by n matrix will have n unique eigenvectors, and
+    they will all be mutually perpendicular to each other.
+  - Put concretely: if v1 and v2 are different eigenvectors of a
+    symmetric matrix M, they are oriented 90 degrees away from each
+    other.
+  - Another way to say the same thing: take the dot product of any
+    two of M's eigenvectors and it is zero, because they are 90
+    degrees apart. This is the Lecture 5 rule that perpendicular
+    vectors have a cosine of zero, applied to eigenvectors (added).
+  - Example (added), symmetric 2 by 2:
+        M = [[2, 1],
+             [1, 2]]
+      M . (1, 1)  = (3, 3)  = 3 * (1, 1)     eigenvalue 3
+      M . (1, -1) = (1, -1) = 1 * (1, -1)    eigenvalue 1
+      (1, 1) . (1, -1) = 1 - 1 = 0            perpendicular
+    Two eigenvectors, a dot product of zero, a right angle between
+    them. Exactly what the rule promises for a symmetric matrix.
+  - Counterexample (added), not symmetric:
+        M = [[2, 1],
+             [0, 3]]
+      M . (1, 0) = (2, 0) = 2 * (1, 0)     eigenvalue 2
+      M . (1, 1) = (3, 3) = 3 * (1, 1)     eigenvalue 3
+      (1, 0) . (1, 1) = 1                  not perpendicular
+    Two perfectly good eigenvectors, 45 degrees apart, dot product
+    of one. The perpendicular guarantee is a symmetric-matrix
+    guarantee and nothing more.
+  - Code (added):
+      import numpy as np
+      S,T = np.array([[2,1],[1,2]]),np.array([[2,1],[0,3]])
+      for M in (S,T):
+          vals,vecs = np.linalg.eig(M) ## columns of vecs are eigenvectors
+          print(vals, np.dot(vecs[:,0],vecs[:,1])) ## 0.0 for S, 0.707 for T
+    Lecture 10 covers np.linalg.eig properly. For now the point is
+    the second number: zero for the symmetric matrix, not zero for
+    the other one.
+
+6. THE EIGENSPACE
+  - The whole set of eigenvectors v1, v2, v3 up to vn effectively
+    defines a new coordinate system, like the typical x-y plane but
+    rotated or spun a little.
+  - KEY TERM: eigenspace: that new coordinate system defined by the
+    eigenvectors of M.
+  - Why it is useful: it describes data in what are called the
+    natural coordinates for that dataset.
+  - Practical framing (added): the x and y axes are a choice, not a
+    law. If your data is a cloud of points stretched along a
+    diagonal, the natural axes are "along the stretch" and "across
+    the stretch". For a symmetric matrix built from that data, the
+    eigenvectors are those two axes, and the eigenvalues say how
+    much stretch lives along each one. Lecture 11 uses exactly this
+    to throw away the axes with almost no stretch.
+  - In the example above, the eigenvectors (1,1) and (1,-1) are the
+    x-y axes turned 45 degrees. That turned grid is the eigenspace
+    of [[2,1],[1,2]] (added).
+
+7. THE WARNING
+  - These interpretations for eigenvectors are only true if M is
+    symmetric. If M is not symmetric, or does not meet some other
+    very specific requirements, then this may not be the case for
+    its eigenvectors.
+  - The counterexample in section 5 is the warning in numbers: a
+    non-symmetric matrix still has eigenvectors, but they are not
+    at right angles and do not make a clean rotated grid (added).
+  - What survives for any square matrix (added): the definition
+    itself. M . v = lambda * v still defines eigenvectors and
+    eigenvalues, and Lecture 9's method still finds them. What you
+    lose without symmetry is the guarantee of n perpendicular ones.
+
+8. KEY TAKEAWAYS
+  - An eigenvector of M keeps its angle when M acts on it. It only
+    stretches or shrinks. The factor is its eigenvalue lambda.
+  - The equation: M . v = lambda * v.
+  - A symmetric matrix mirrors across its main diagonal.
+  - A symmetric n by n matrix has n eigenvectors that are all
+    mutually perpendicular. Their pairwise dot products are zero.
+  - Those eigenvectors define a rotated coordinate system called
+    the eigenspace, the natural coordinates for the data.
+  - Without symmetry, none of the perpendicular-grid guarantees
+    apply.
+
+9. QUIZ-SAFE FACTS
+  - Eigenvector: a vector that does not rotate when M acts on it.
+    The result has the same exact angle as v, and can only shrink
+    or grow along that axis.
+  - Eigenvalue: the scalar lambda in M . v = lambda * v. It is the
+    amount of shrinking or growing.
+  - In the shear demo, the blue reference vector does not change as
+    b varies. That is the motivating example.
+  - Symmetric matrix: the top right triangle is the mirror image of
+    the bottom left triangle across the top-left to bottom-right
+    line.
+  - A symmetric n by n matrix has n unique eigenvectors, all
+    mutually perpendicular (90 degrees apart, dot product zero).
+  - The set of eigenvectors defines a new coordinate system called
+    the eigenspace, the natural coordinates for the dataset.
+  - The perpendicular and coordinate-system interpretations hold
+    only for symmetric matrices (or matrices meeting other very
+    specific requirements).

@@ -1,0 +1,250 @@
+1. WHAT THIS LECTURE COVERS
+  - The professor's goal: simplify the tools used to represent
+    relationships between variables. The tool is the vector, and
+    he says that once vectors show up, "we're really starting to
+    talk about linear algebra in its most typical fashion."
+  - Four things get introduced: what a vector is (an ordered
+    list, drawn as an arrow), adding a number to a vector,
+    adding and subtracting two vectors, and scaling a vector by
+    a number.
+  - Practical framing (added): a vector is an array. If you have
+    used a Python list, a NumPy array, or a column of a
+    spreadsheet, you have used one. The math adds two things the
+    array does not have on its own: a picture (the arrow) and a
+    fixed set of rules for combining arrays.
+
+2. WHY VECTORS: GROUPING INFORMATION BY TYPE
+  - The grocery equation 30 = 2.apples + 3.oranges + 5.bread
+    carries three kinds of information: the total budget on the
+    left, the number of each grocery item (the variables), and
+    the price of each item (the numbers multiplying them).
+  - His alternative to one long equation: group the information
+    by type. Separate the item counts from the item costs.
+    Vectors are the way to do that, and they let you represent
+    the information "as points in a high dimensional space."
+  - The motivation he gives for the prices: they have been
+    treated as fixed, but prices change. You want a flexible
+    representation of the cost information so you can update it
+    later.
+  - Why this matters in practice (added): a single equation
+    hard-codes the prices into the formula. A separate cost
+    vector is a parameter you can swap without rewriting the
+    model. Every later operation in this module (dot products,
+    matrix products) is built on exactly this separation of
+    "the data" from "the rule."
+
+3. THE COST VECTOR
+  - Encode the prices as an ordered list: the first component is
+    the cost of apples ($2), the second is the cost of oranges
+    ($3), the third is the cost of bread ($5).
+  - KEY TERM: vector: an ordered list of numbers. The professor
+    writes it as a column of numbers with a small arrow over the
+    letter (c with an arrow) to say "this c is not a number, it
+    is a vector."
+  - KEY TERM: component: one entry in the vector, identified by
+    its position (added definition). "First component" means the
+    first number in the list. The order is part of the meaning:
+    swap two components and you have a different vector.
+  - The fruit stand cost vector, with bread ignored, has just
+    two components: cost of apples, cost of oranges.
+  - His geometric reading: a two-component vector is a specific
+    point in two-dimensional space. Not the usual x-y plane but
+    the apple-orange cost plane. It is common to draw the vector
+    not as a point but as an arrow to that point.
+  - Example (added): a coffee cart sells bagels at $3, coffees
+    at $4, and muffins at $2. Its cost vector is c = (3, 4, 2).
+    Drop muffins and the cart's two-item cost vector is (3, 4),
+    a point three units along the bagel-cost axis and four up
+    the coffee-cost axis.
+
+4. VECTORS AS ARROWS FROM THE ORIGIN
+  - He returns to the apples-versus-oranges line plot from
+    Lecture 1 and draws the current (apples, oranges) pair as a
+    vector "emanating from zero zero, from the origin," ending
+    at the point on the line. Change the number of apples and
+    the arrow swings to follow the point. See the widget in
+    Lecture 3 (notebook section "What are Vectors?", the
+    visualize function with the plotVector arrow).
+  - KEY TERM: origin: the point where every coordinate is zero.
+    (0, 0) in two dimensions, (0, 0, 0) in three (added
+    definition). Every arrow in this lecture starts there.
+  - Three dimensions works the same way. The grocery example has
+    apples, oranges, and bread, so the arrow leaves (0, 0, 0)
+    and ends at the point with those three coordinates. He walks
+    the three sliders: change apples and the vector moves along
+    the apple axis, change oranges and it moves along the orange
+    axis, change bread and it moves up and down the third axis.
+    See the 3D widget in the same notebook section (the
+    plot_vector function with apples, oranges, bread sliders).
+  - The arrow is a convention, not a fact (added): the vector is
+    the list of numbers. The arrow is how you draw it. Any time
+    a picture in this module gets confusing, go back to the
+    list. The list is always right.
+
+5. ADDING A NUMBER TO A VECTOR
+  - His scenario: the grocery raises every price by $1. Write a
+    second vector, c2, equal to the cost vector plus one.
+  - The rule: add the number to every component. In the fruit
+    stand case, 2 + 1 is 3 and 3 + 1 is 4, so c2 = (3, 4). Every
+    component went up by one.
+  - His demo: add nothing and you get the starting vector back
+    (c2 equals c). Add more and more and the new vector moves
+    further away along both the x axis and the y axis. See the
+    add_to_vector widget in the Lecture 3 notebook section.
+  - Example (added): the coffee cart's cost vector c = (3, 4, 2)
+    after a $1 hike on everything is c + 1 = (4, 5, 3). Each of
+    the three prices moved by the same $1. The arrow's tip moved
+    one unit along every axis at once.
+  - What this does to the picture (added): adding the same
+    number to every component slides the arrow's tip diagonally,
+    one unit per axis. It is not the same as making the arrow
+    longer along its own direction. That operation is scaling,
+    section 8.
+
+6. ADDING TWO VECTORS
+  - He switches to two generic vectors that "don't necessarily
+    represent anything": a = (2, 3) and b = (1, 2).
+  - KEY TERM: componentwise: done one position at a time. The
+    first components combine with each other, the second
+    components combine with each other, and so on (added
+    definition).
+  - Vector addition is componentwise. a + b has first component
+    2 + 1 = 3 and second component 3 + 2 = 5. Result (3, 5), a
+    new vector of the same size.
+  - The two vectors must be the same length for this to make
+    sense (added): there is no second component of b to pair
+    with the second component of a otherwise. NumPy will
+    complain, and it is right to.
+  - The picture, in his words: take a copy of b, same angle and
+    same length, and attach its tail to the endpoint of a. Where
+    the copy ends is the endpoint of a + b. His demo draws that
+    "ghost copy" of b. Change b's length or angle and the ghost
+    changes with it, but sticking it on the end of a always
+    lands on a + b. See the addVectors widget in the Lecture 3
+    notebook (sliders for each vector's angle and norm).
+  - Example (added): a = (1, 4) and b = (3, 2).
+    - First components: 1 + 3 = 4.
+    - Second components: 4 + 2 = 6.
+    - a + b = (4, 6). Start at the origin, go to (1, 4), then
+      walk 3 right and 2 up. You arrive at (4, 6).
+  - Practical reading (added): vector addition is "and then."
+    Position plus displacement. This week's sales plus next
+    week's sales. Two forces on one object. Anything where two
+    lists of matching quantities combine position by position.
+
+7. SUBTRACTING TWO VECTORS
+  - Subtraction is componentwise too, "exactly the same" in his
+    words. a - b subtracts the first component of b from the
+    first component of a, the second from the second, and so
+    on. For a = (2, 3) and b = (1, 2): 2 - 1 is 1 and 3 - 2 is
+    1. Result (1, 1).
+  - The picture: still a ghost copy of b, but instead of
+    attaching its tail to the end of a, you attach its head to
+    the end of a and walk backwards along it. Where you end up
+    is a - b. See the subtractVectors widget in the Lecture 3
+    notebook.
+  - His summary line for both operations: adding and
+    subtracting vectors is like taking a copy of one vector and
+    sticking it on the endpoint of the other.
+  - Example (added): a = (1, 4) and b = (3, 2).
+    - a - b = (1 - 3, 4 - 2) = (-2, 2).
+    - b - a = (3 - 1, 2 - 4) = (2, -2). Order matters, just as
+      with numbers. Reversing it flips every sign.
+    - Negative components are fine. (-2, 2) is an arrow pointing
+      up and to the left.
+  - Practical reading (added): a - b is "how do I get from b to
+    a." Difference between two positions, change between two
+    readings, the error between a prediction and an actual.
+    Subtraction is the operation you reach for whenever the
+    question is "what changed."
+
+8. SCALING A VECTOR BY A SCALAR
+  - New vector g represents the other kind of grocery
+    information, the number of each item purchased. His example
+    is g = (4, 2, 3): 4 apples, 2 oranges, 3 loaves of bread.
+  - Triple the purchase of every item: the new vector g2 equals
+    3 times g. Computed componentwise: 4 times 3 is 12, 2 times
+    3 is 6, 3 times 3 is 9. g2 = (12, 6, 9). Every component was
+    multiplied by 3.
+  - KEY TERM: scalar: a plain number that multiplies a vector.
+    The professor prefers to say the vector was "scaled by a
+    scalar equal to 3" instead of "multiplied by 3."
+  - KEY TERM: scaling: multiplying every component of a vector
+    by the same scalar (added definition).
+  - Why the careful wording: he warns that "multiplication has
+    contextually dependent meaning" once vectors and the other
+    objects of linear algebra are involved. Lecture 5 introduces
+    two different vector "multiplications," so scalar
+    multiplication gets its own name now to avoid the collision.
+  - The picture: scaling g by 3 is like taking two extra copies
+    of g and sticking them end to end on g. The new endpoint is
+    3 times g. Same angle, three times the length. See the
+    two-panel plot and the scale_vector widget in the Lecture 3
+    notebook.
+  - Three cases he walks through with the slider:
+    - Positive scalar greater than 1: the vector lengthens along
+      the same angle.
+    - Scalar less than 1: the vector shrinks.
+    - Negative scalar: the vector follows the same line but
+      points the opposite direction.
+    The angle relative to the axes never changes. Only the
+    length and, for negatives, the direction.
+  - Example (added): coffee cart order g = (2, 1, 4), meaning 2
+    bagels, 1 coffee, 4 muffins.
+    - Double it: 2.g = (4, 2, 8).
+    - Halve it: 0.5.g = (1, 0.5, 2). Half a coffee is legal
+      here, the professor allowed fractional items in Lecture 1.
+    - Negate it: -1.g = (-2, -1, -4). Same line through the
+      origin, opposite direction. A negative order makes no
+      sense at a cart, but the geometry does not care.
+  - Code (added): every operation in this lecture is one line
+    once the vectors are NumPy arrays.
+      import numpy as np
+      c,g = np.array([3,4,2]),np.array([2,1,4]) ## costs, order
+      print(c+1) ## [4 5 3], price hike
+      print(2*g, -1*g) ## [4 2 8] [-2 -1 -4], scaled
+      a,b = np.array([1,4]),np.array([3,2]) ## two generic vectors
+      print(a+b, a-b) ## [4 6] [-2  2]
+
+9. KEY TAKEAWAYS
+  - A vector is an ordered list of numbers, drawn as an arrow
+    from the origin to the point the list names. The arrow over
+    the letter marks it as a vector, not a number.
+  - Vectors separate the kinds of information in an equation:
+    a cost vector for prices, a count vector for quantities.
+  - Adding a number to a vector adds it to every component.
+  - Adding or subtracting two vectors is componentwise, and the
+    vectors must be the same length. The picture is a copy of
+    one vector attached to the tip of the other.
+  - Scaling a vector by a scalar multiplies every component.
+    Positive scalars stretch or shrink along the same angle,
+    negative scalars flip the direction.
+  - Say "scaled by a scalar," not "multiplied," because
+    multiplication will mean other things soon.
+
+10. QUIZ-SAFE FACTS
+  - The grocery equation carries three kinds of information:
+    total budget, number of each item, price of each item.
+  - Vectors represent information as points in a
+    high-dimensional space.
+  - The cost vector c (arrow on top) for the grocery example is
+    (2, 3, 5): apples, oranges, bread, in that order. For the
+    fruit stand it is (2, 3).
+  - Vectors are drawn as arrows emanating from the origin
+    (0, 0) or (0, 0, 0).
+  - Adding $1 to every price: c2 = c + 1 = (3, 4). Each
+    component increased by one.
+  - a = (2, 3) and b = (1, 2): a + b = (3, 5), a - b = (1, 1).
+    Both are componentwise.
+  - Adding: attach a copy of b (same angle, same length) to the
+    endpoint of a. Subtracting: attach the copy's endpoint and
+    walk backwards.
+  - g = (4, 2, 3) is 4 apples, 2 oranges, 3 loaves. Tripled,
+    3.g = (12, 6, 9).
+  - A number multiplying a vector is called a scalar, and the
+    operation is called scaling.
+  - Scaling by a positive scalar keeps the angle and changes the
+    length. A scalar below 1 shrinks it. A negative scalar
+    points it the opposite way along the same line.
+  - Multiplication has contextually dependent meaning in linear
+    algebra.

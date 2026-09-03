@@ -1,0 +1,315 @@
+1. WHAT THIS LECTURE COVERS
+  - The method for finding eigenvalues and eigenvectors of a square
+    matrix by hand, built up one piece at a time: the identity
+    matrix, a rearranged definition, the determinant as an area,
+    a quadratic equation, and finally the eigenvectors from the
+    eigenvalues.
+  - This is the heaviest lecture of the module. The mechanics are
+    all 2 by 2 arithmetic. The hard part is the one idea in the
+    middle, "somehow equal to zero", and that gets its own section.
+
+2. THE STRATEGY: EIGENVALUES FIRST
+  - Recall the definition. v is an eigenvector of M if M . v
+    rescales v by a scalar lambda without changing its angle.
+  - For an n by n matrix M there will be n eigenvectors and n
+    corresponding eigenvalues. Subscripts pair them: v1 goes with
+    lambda1, v2 with lambda2, and so on.
+  - The plan in general: first find all the eigenvalues, all the
+    lambdas. Then use each eigenvalue to find its eigenvector
+    through the rescaling relationship.
+  - Why in that order (added): the definition has two unknowns in
+    it, v and lambda, and you cannot solve for both at once. The
+    trick below removes v from the picture, leaving an equation in
+    lambda alone. Solve that, then put v back.
+
+3. THE IDENTITY MATRIX
+  - KEY TERM: identity matrix: a square n by n matrix, written I,
+    with ones along the main diagonal from the top left to the
+    bottom right and zeros everywhere else.
+        I (3 by 3) = [[1, 0, 0],
+                      [0, 1, 0],
+                      [0, 0, 1]]
+  - Why "identity": if I acts on any matrix M or any vector v, you
+    just get that matrix or vector back on the other side.
+  - Example (added): I . (7, -2) = (1*7 + 0*(-2), 0*7 + 1*(-2)) =
+    (7, -2). And with A = [[4,2],[1,3]], both I . A and A . I come
+    back as A. It is the matrix version of multiplying by one.
+  - Why it is needed here (added): the eigenvector equation has a
+    matrix on one side and a plain number on the other. To subtract
+    one from the other you need the number dressed up as a matrix.
+    lambda times I is that dressed-up number.
+
+4. REARRANGING THE DEFINITION
+  - Start from M . v = lambda * v. Subtract M . v from both sides.
+    The left side becomes zero, really a vector full of zeros, and
+    the right side becomes lambda * v - M . v.
+  - Both terms contain v, so pull it out front as if v were a
+    number. What is left is (lambda * I - M) acting on v, and the
+    whole thing must equal the vector of zeros.
+        (lambda * I - M) . v = 0
+  - The identity matrix is what makes "pull v out" legal (added).
+    lambda * v is the same as (lambda * I) . v, and now both terms
+    are a matrix times v, so the matrices can be combined.
+
+5. THE TRIVIAL SOLUTION AND WHY IT IS IGNORED
+  - There are two ways that equation can be true. The first is that
+    v is the zero vector. That works for any matrix M, every time.
+  - KEY TERM: trivial solution: the eigenvector of all zeros. It
+    always satisfies the equation and it says nothing about M
+    compared to any other matrix, so it is ignored.
+  - If v is not the zero vector, then the stuff in the parentheses,
+    lambda * I - M, must somehow be equal to zero.
+  - Why that is strange: lambda * I is an n by n matrix, M is an
+    n by n matrix, their difference is still an n by n matrix, and
+    yet acting on a nonzero v it has to produce the zero vector.
+    It does not have to be a matrix full of zeros. It has to be
+    zero in a different sense.
+
+6. "SOMEHOW EQUAL TO ZERO": THE UNIT SQUARE
+  - The sense that matters: does M, as a function, stretch the x-y
+    plane in a way that shrinks space so that the resulting area is
+    zero? The lecture's own words are "I know this is a bit weird
+    to think about", and then it gives a picture. Here is the
+    picture in numbers.
+  - KEY TERM: unit square: the square with base and height both 1
+    and its bottom left corner at the origin. Its corners are
+    (0,0), (0,1), (1,1), and (1,0).
+  - Write those corners as columns of a 2 by 4 matrix S:
+        S = [[0, 0, 1, 1],
+             [0, 1, 1, 0]]
+  - Keep M generic, M = [[a, b], [c, d]], and let it act on S. Row
+    one of M dotted with each column of S, then row two:
+        M . S = [[0, b, a + b, a],
+                 [0, d, c + d, c]]
+    First column: (a,b) . (0,0) is 0. Second: (a,b) . (0,1) is b.
+    Third: (a,b) . (1,1) is a + b. Same again with row (c,d).
+  - The result still has four corners and it is square-like, but
+    instead of the unit square it defines a parallelogram, a
+    rectangle warped a little. Different choices of a, b, c, d give
+    different parallelograms with different areas. Sometimes the
+    area is zero, and that is the case being hunted.
+  - Example (added), M = [[3, 1], [1, 2]]:
+        M . S = [[0, 1, 4, 3],
+                 [0, 2, 3, 1]]
+    Corners (0,0), (1,2), (4,3), (3,1). A tilted parallelogram
+    with a nonzero area.
+  - Example (added), M = [[2, 4], [1, 2]]:
+        M . S = [[0, 4, 6, 2],
+                 [0, 2, 3, 1]]
+    Corners (0,0), (4,2), (6,3), (2,1). Every one of those points
+    sits on the line y = x/2. The square has been flattened onto a
+    single line. A flat parallelogram has area zero. This matrix
+    is "somehow equal to zero" in the sense the lecture means: not
+    a matrix of zeros, but a function that squashes a whole plane
+    down to a line.
+  - See the parallelogram widget with its a, b, c, d dials in the
+    Lecture 9 notebook section "Finding Eigenvalues and
+    Eigenvectors". With a = 1, d = 1, b = c = 0 it is the identity
+    and you get the square back. Sliding a stretches horizontally
+    into a rectangle, sliding d stretches vertically, and b and c
+    produce the slanted parallelograms.
+
+7. THE DETERMINANT
+  - With some work you can recover the geometry and show that the
+    area of the resulting parallelogram is a*d - b*c, using nothing
+    but the four numbers in M.
+  - Sanity check the lecture gives: when b and c are zero the
+    parallelogram is a rectangle, and rectangle area is base times
+    height, which is a*d. The b*c term is the correction for the
+    slant once the shape is no longer a rectangle.
+  - KEY TERM: determinant: for a 2 by 2 matrix M, the area of the
+    parallelogram that M produces when it acts on the unit square.
+        det(M) = m11 * m22 - m12 * m21
+    Subscripts are row then column, so m12 is row 1, column 2.
+  - Checking the examples (added): for [[3,1],[1,2]] the determinant
+    is 3*2 - 1*1 = 5, and measuring the parallelogram with corners
+    (0,0), (1,2), (4,3), (3,1) gives area 5. For [[2,4],[1,2]] the
+    determinant is 2*2 - 4*1 = 0, matching the flattened square.
+    For the rectangle [[2,0],[0,3]] it is 6, base 2 times height 3.
+  - Code (added):
+      import numpy as np
+      for M in ([[3,1],[1,2]],[[2,4],[1,2]],[[2,0],[0,3]]):
+          print(np.linalg.det(np.array(M)).round(4)) ## 5.0, 0.0, 6.0
+
+8. BIGGER MATRICES
+  - For a 3 by 3 matrix, the same approach applies with a unit cube
+    instead of a unit square. M acts on the corners of the cube,
+    the result is a three dimensional parallelogram, and the
+    determinant is its volume. Zero volume is the case of interest.
+  - The lecture gives the 3 by 3 formula. For M with rows (a,b,c),
+    (d,e,f), (g,h,i):
+        det(M) = aei + bfg + cdh - ceg - bdi - afh
+  - Example (added): M = [[1,2,0],[0,3,1],[2,0,1]].
+      aei = 1*3*1 = 3    bfg = 2*1*2 = 4    cdh = 0*0*0 = 0
+      ceg = 0*3*2 = 0    bdi = 2*0*1 = 0    afh = 1*1*0 = 0
+      det = 3 + 4 + 0 - 0 - 0 - 0 = 7
+    NumPy's det agrees to floating point noise: it prints
+    6.999999999999998 rather than 7.
+  - For 4 by 4, 5 by 5, and up, it is the same idea with whatever
+    the higher dimensional equivalent of volume is. The equations
+    get very long. The lecture says you can certainly sort that out
+    in higher dimensions, and then returns to 2 by 2 for the rest.
+  - Practical note (added): nobody expands a 5 by 5 by hand.
+    np.linalg.det does it. The formula matters for understanding
+    what the number means and for the 2 by 2 case on a quiz.
+
+9. THE CHARACTERISTIC EQUATION IS A QUADRATIC
+  - Back to 2 by 2. The real question is: when is the determinant
+    of (lambda * I - M) equal to zero?
+  - Multiply through. lambda * I puts lambda on the diagonal and
+    zeros off it. Subtract M component-wise:
+        lambda * I - M = [[lambda - m11,  -m12       ],
+                          [-m21,          lambda - m22]]
+  - Apply the 2 by 2 determinant, ad - bc, and be careful with the
+    minus signs:
+        0 = (lambda - m11)(lambda - m22) - (-m12)(-m21)
+        0 = lambda^2 - lambda(m11 + m22) + (m11*m22 - m12*m21)
+  - Look at the lambdas. A scalar times lambda squared, minus a
+    scalar times lambda, plus a term with no lambda in it. This is
+    just a quadratic equation, and quadratic equations have a
+    formula.
+  - The lecture writes the leading coefficient as (1) times lambda
+    squared. Multiplying by one changes nothing, it just makes the
+    "a" of the quadratic formula visible.
+  - Two shortcuts worth memorizing (added): m11 + m22 is the sum of
+    the diagonal, and m11*m22 - m12*m21 is det(M). So the quadratic
+    is always lambda^2 - (diagonal sum) lambda + det(M) = 0 for a
+    2 by 2. Two numbers off the matrix and you have the equation.
+
+10. THE QUADRATIC FORMULA
+  - KEY TERM: quadratic formula: for a*x^2 + b*x + c = 0,
+        x = (-b plus or minus sqrt(b^2 - 4ac)) / 2a
+  - Match the parts. Here a is 1, b is -(m11 + m22), and c is
+    m11*m22 - m12*m21. Plug in:
+        lambda = ((m11 + m22) plus or minus
+                  sqrt((m11 + m22)^2 - 4(1)(m11*m22 - m12*m21)))
+                 / 2(1)
+  - The plus or minus yields two different eigenvalues, lambda1
+    with the plus and lambda2 with the minus. Two eigenvalues for a
+    2 by 2, as promised in section 2.
+  - Example (added), M = [[4, 2], [1, 3]]:
+      diagonal sum = 4 + 3 = 7
+      det(M) = 4*3 - 2*1 = 10
+      0 = lambda^2 - 7 lambda + 10
+      lambda = (7 plus or minus sqrt(49 - 40)) / 2
+             = (7 plus or minus 3) / 2
+      lambda1 = 5, lambda2 = 2
+    Check against NumPy: np.linalg.eigvals([[4,2],[1,3]]) prints
+    [5. 2.].
+  - Example (added), the symmetric matrix from Lecture 8,
+    M = [[2, 1], [1, 2]]: diagonal sum 4, determinant 3, so
+    lambda^2 - 4 lambda + 3 = 0, and lambda = (4 plus or minus
+    sqrt(16 - 12)) / 2 = (4 plus or minus 2) / 2, giving 3 and 1.
+    Those are the two eigenvalues found by inspection in the
+    Lecture 8 notes.
+
+11. FROM EIGENVALUE TO EIGENVECTOR
+  - Now find v1, the eigenvector for lambda1. Call its components a
+    and b, so v1 = (a, b). The question is: what are a and b?
+  - What is known: lambda1 is a number from the quadratic formula,
+    and M acting on v1 equals v1 rescaled by lambda1. Write the
+    left side out as two row dot products:
+        [[m11, m12],  . [a,   =  [lambda1 * a,
+         [m21, m22]]     b]       lambda1 * b]
+      m11*a + m12*b = lambda1 * a
+      m21*a + m22*b = lambda1 * b
+  - Treat those as two separate equations. Subtract lambda1*a from
+    both sides of the first and lambda1*b from both sides of the
+    second:
+      0 = (m11 - lambda1)*a + m12*b
+      0 = m21*a + (m22 - lambda1)*b
+    Both must be true at once.
+  - The trivial solution shows up again: a = 0 and b = 0 works for
+    any matrix. Ignored for the same reason as before.
+  - Focus on the first equation. Subtract m12*b from both sides,
+    divide both sides by (m11 - lambda1), and move the minus sign
+    into the denominator:
+        a = (m12 / (lambda1 - m11)) * b
+    Now a is written as a function of b. Plug it into v1:
+        v1 = ( (m12 / (lambda1 - m11)) * b,  b )
+  - Continuing the example (added), M = [[4, 2], [1, 3]] with
+    lambda1 = 5:
+      a = (2 / (5 - 4)) * b = 2b
+      v1 = (2b, b). Pick b = 1: v1 = (2, 1).
+      Check: M . (2, 1) = (4*2 + 2*1, 1*2 + 3*1) = (10, 5) = 5 * (2, 1)
+    And for lambda2 = 2:
+      a = (2 / (2 - 4)) * b = -b
+      v2 = (-b, b). Pick b = 1: v2 = (-1, 1).
+      Check: M . (-1, 1) = (-4 + 2, -1 + 3) = (-2, 2) = 2 * (-1, 1)
+    Both checks land exactly on lambda times the vector. That check
+    is the whole definition, so if it passes, you are done.
+
+12. INFINITELY MANY EIGENVECTORS PER EIGENVALUE
+  - At this point the method is stuck on b. There is no equation
+    that pins b down.
+  - That is not a flaw. There are infinitely many eigenvectors
+    associated with a given eigenvalue, and you find all of them by
+    varying b. Every one of them is aligned with the others: same
+    angle, different length, rescaled versions of each other.
+  - Whatever b you choose, M acting on that vector gives back a
+    version scaled by lambda1. In the example, (2,1), (4,2), and
+    (-6,-3) are all eigenvectors for lambda1 = 5, because they all
+    point along the same line (added).
+  - The lecture's demo lets you tune m12, m11, and lambda1 and then
+    slide b. Every vector produced lines up along one axis. See the
+    v1 slider widget at the end of the Lecture 9 notebook section.
+  - What software does about it (added): NumPy picks the one with
+    length 1. Lecture 10 covers that.
+
+13. THE WHOLE METHOD ON ONE PAGE (added)
+  - Given a 2 by 2 matrix M:
+      1. Diagonal sum = m11 + m22. Determinant = m11*m22 - m12*m21.
+      2. Solve lambda^2 - (diagonal sum) lambda + det = 0 with the
+         quadratic formula. Two roots, lambda1 and lambda2.
+      3. For each lambda: a = (m12 / (lambda - m11)) * b, pick b = 1,
+         eigenvector is (m12 / (lambda - m11), 1). Scale to taste.
+      4. Check: M . v should equal lambda * v.
+  - Code (added):
+      import numpy as np
+      M = np.array([[4,2],[1,3]])
+      tr,det = M[0,0]+M[1,1],np.linalg.det(M) ## diagonal sum, determinant
+      lams = ((tr+np.sqrt(tr**2-4*det))/2,(tr-np.sqrt(tr**2-4*det))/2) ## quadratic formula
+      for lam in lams: v = np.array([M[0,1]/(lam-M[0,0]),1]); print(lam.round(6), v, np.dot(M,v), lam*v) ## last two match
+  - One edge to know about (added): if lambda - m11 is zero the
+    division fails. Use the second equation instead, solved for b
+    in terms of a. Same idea, other row.
+
+14. KEY TAKEAWAYS
+  - Strategy: eigenvalues first, then eigenvectors.
+  - The identity matrix I has ones on the main diagonal and returns
+    whatever it acts on unchanged.
+  - M . v = lambda * v rearranges to (lambda * I - M) . v = 0. The
+    zero vector is the trivial solution and is ignored.
+  - "Somehow equal to zero" means the matrix squashes the plane to
+    zero area. The determinant measures that area: ad - bc for a
+    2 by 2.
+  - det(lambda * I - M) = 0 is a quadratic in lambda. The quadratic
+    formula gives the two eigenvalues.
+  - For each eigenvalue, the first row equation gives a in terms of
+    b. Any b works, all choices lie on the same line.
+
+15. QUIZ-SAFE FACTS
+  - An n by n matrix has n eigenvectors and n eigenvalues.
+  - The identity matrix: square, ones along the main diagonal from
+    top left to bottom right, zeros elsewhere. I acting on M or v
+    returns M or v.
+  - Subtracting M . v from both sides of the definition gives the
+    zero vector on the left and (lambda * I - M) acting on v on the
+    right.
+  - The zero vector is the trivial solution, true for any M, and
+    ignored.
+  - The unit square has corners (0,0), (0,1), (1,1), (1,0), written
+    as the columns of a 2 by 4 matrix S. M = [[a,b],[c,d]] acting on
+    S gives [[0, b, a+b, a], [0, d, c+d, c]], a parallelogram.
+  - Area of that parallelogram, and the determinant of a 2 by 2:
+    a*d - b*c, or m11*m22 - m12*m21.
+  - For a 3 by 3, the determinant is the volume after M acts on the
+    unit cube: aei + bfg + cdh - ceg - bdi - afh.
+  - det(lambda * I - M) expands to lambda^2 - lambda(m11 + m22) +
+    (m11*m22 - m12*m21), a quadratic.
+  - Quadratic formula: x = (-b plus or minus sqrt(b^2 - 4ac)) / 2a.
+  - The plus or minus gives two eigenvalues, lambda1 and lambda2.
+  - Eigenvector for lambda1: a = (m12 / (lambda1 - m11)) * b, so
+    v1 = ((m12 / (lambda1 - m11)) * b, b) for any b.
+  - There are infinitely many eigenvectors per eigenvalue, all with
+    the same angle and different lengths.
