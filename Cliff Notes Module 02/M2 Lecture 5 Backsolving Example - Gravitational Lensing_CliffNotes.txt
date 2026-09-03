@@ -1,0 +1,241 @@
+1. WHY THIS MATTERS
+  - Lecture 4 ended with Python inverting matrices. This lecture
+    shows one place the same inversion does real work: figuring
+    out where galaxies actually are when gravity has warped the
+    light on its way to us. The professor notes there are a
+    bunch of real-world examples of matrix inversion and picks
+    this one as a really interesting case.
+  - The shape of the problem is the coffee shop problem from the
+    rest of the module with the labels swapped. There, a
+    quantity matrix acted on unknown prices to produce observed
+    receipts, and inverting the matrix recovered the prices.
+    Here, a lens matrix acts on unknown source positions to
+    produce observed positions of light, and inverting the
+    matrix recovers the source. (added explanation)
+  - KEY TERM: gravitational lensing: the bending of light from a
+    far-off source by a very massive object sitting between the
+    source and the observer. (added definition)
+
+2. GENERAL RELATIVITY AND BENT LIGHT
+  - The science of gravitational lensing is based on the theory
+    of general relativity. In that theory, very massive objects
+    (the sun, galaxies, black holes) bend space-time around
+    them.
+  - In bending space-time, those objects can bend the light
+    emitted from far-off galaxies as it passes them.
+  - KEY TERM: general relativity: the physics theory in which
+    mass curves space-time, and light follows that curvature.
+    (added definition)
+
+3. THE TELESCOPE IMAGE
+  - See the telescope image at the start of Lecture 5, taken by
+    the Hubble or the James Webb space telescope.
+  - The lesson it carries: the bright object in the middle is a
+    supermassive thing, probably a galaxy or black hole. The
+    ring of light around it is not part of that object. It is
+    light from another normal-looking galaxy sitting behind the
+    massive object, wrapped around the outside of it on its way
+    to Earth. The ring is the far galaxy, smeared by gravity.
+  - The question the rest of the lecture answers: how do
+    physicists correct for the lensing to determine where that
+    loop of light is actually coming from.
+
+4. THE SINGULAR ISOTHERMAL SPHERE MODEL
+  - In its simplest form the system is represented with a
+    singular isothermal sphere model. The professor calls it a
+    simplistic model for how light is lensed when gravity is
+    involved.
+  - The model's pieces: the observed locations of light, and a
+    matrix A that represents the effect of the massive object on
+    the source of light.
+  - The goal stated in the lecture: based on where I observed
+    the light to be, plus some information about the black hole
+    between me and the source, can I calculate where the light
+    is actually coming from.
+  - KEY TERM: singular isothermal sphere model: the simplest
+    lensing model, in which the massive object's effect on the
+    source light is captured by a single matrix A.
+
+5. THE MATRIX A AND WHAT IT ENCODES
+  - In the simple model A is a two-by-two matrix. It represents
+    two things: how massive the black hole is, and how much
+    tidal force the black hole is creating.
+  - Tidal forces, per the lecture, are basically twisting the
+    light coming from behind the object.
+  - Why two-by-two: a position on the sky is two numbers, an x
+    and a y. A matrix that takes a two-number position in and
+    puts a two-number position out has to be 2x2. (added
+    explanation)
+  - The relationship: observed positions are A acting on the
+    true positions. In the module's notation, observed = A
+    times true, the same way receipts = Q times prices. (added
+    explanation)
+  - KEY TERM: tidal force: the twisting effect of the massive
+    object on the light behind it, as the lecture describes it.
+
+6. INVERTING A TO FIND THE SOURCE
+  - If you can estimate some details about the black hole, for
+    example how big it is, that helps you build A, and then
+    calculate the inverse of A.
+  - With the inverse of A in hand, act on the observed location
+    of light with it and you back out where the light is
+    actually coming from.
+  - Why the inverse is the right tool: observed = A times true.
+    Multiply both sides on the left by A inverse. A inverse
+    times A is the identity, so true = A inverse times observed.
+    Every observed point in the ring maps back to a point in the
+    source galaxy. (added explanation)
+  - What goes wrong without a good estimate of the black hole:
+    A is built from that estimate, so a wrong mass gives a wrong
+    A, a wrong inverse, and a reconstructed galaxy in the wrong
+    place or the wrong shape. The physics estimate and the
+    linear algebra are two halves of one job. (added
+    explanation)
+
+7. THE GITHUB LIBRARY DEMO
+  - The professor walks through code from a GitHub library that
+    represents light emitted from a galaxy. You can play with it
+    yourself, but it is not required for the class.
+  - The library provides a galaxy object with adjustable
+    properties: how big or small the galaxy is, where it is
+    located relative to your vantage point, how oblong it is,
+    and its spin. All of these only determine the shape of the
+    far-off galaxy.
+  - Then a black hole is imagined between you and the galaxy,
+    something dense and massive enough to warp the galaxy's
+    light on its way to you.
+  - The lecture skips most of the calculation details. The core
+    idea: if you know some things about the size of the black
+    hole, you use that information to rotate and scale the light
+    in and out.
+
+8. THE ROTATE FUNCTION AND THE TWO DOT PRODUCTS
+  - Two of the steps in the library are just matrix dot
+    products. In particular, the rotate function calculates a
+    rotation matrix (seen in previous videos of the course) and
+    uses it to act on the original x, y points.
+  - This happens twice. First the original data is rotated
+    based on the size of the black hole. Then it is done a
+    second time based on the tidal forces.
+  - The professor's summary: all of the effects on the light are
+    captured by these two dot products. Take the physics
+    describing how the gravity well affects the light behind it,
+    represent those effects as rotation matrices, have those
+    matrices act on the actual points of light, and you can
+    simulate systems like the space telescope image.
+  - KEY TERM: rotation matrix: a 2x2 matrix [[cos t, -sin t],
+    [sin t, cos t]] that turns a point through angle t about
+    the origin when applied as a dot product. (added definition)
+  - For example, a 90 degree rotation sends the point (1, 0) to
+    (0, 1). Any matrix that "acts on" a point means exactly
+    this: matrix dot point gives the moved point. (added
+    explanation)
+
+9. THE INTERACTIVE DEMO
+  - The interactive example starts with the plain galaxy. Then a
+    tiny black hole is placed in the middle of it, between us
+    and the galaxy.
+  - Moving the black hole around, side to side or up and down,
+    visibly warps the light from the galaxy behind it.
+  - Growing the black hole: as it gets bigger and bigger it has
+    a much more dramatic effect on the background light,
+    eventually producing something that looks much more like the
+    space telescope image, the ring.
+  - Another dimension in the demo is the amount of tidal force,
+    which spins the light coming from behind the black hole.
+  - Every one of these visual effects is produced by the two dot
+    products in the rotate function.
+
+10. A SMALL WORKED PICTURE OF THE IDEA
+  - The lecture does not give numbers for A. The block below is
+    an illustration of the shape of the calculation only, not
+    the singular isothermal sphere model itself. (added
+    explanation)
+  - The rotate function builds a rotation matrix and applies it
+    to a point. A toy lens matrix L then plays the role of A:
+    it maps a true source position to an observed one, and its
+    inverse maps the observation back.
+
+      import numpy as np
+
+      def rotate(deg, xy): ## rotation matrix acting on a point
+          t = np.radians(deg)
+          R = np.array([[np.cos(t), -np.sin(t)], [np.sin(t), np.cos(t)]])
+          return R @ xy
+
+      print(np.round(rotate(90, np.array([1, 0])), 6)) ## (1,0) -> (0,1)
+
+      L = np.array([[2, 0], [0, 0.5]]) ## toy lens, stretch x, squash y
+      src = np.array([1, 2])
+      obs = L @ src
+      print(obs) ## what the telescope sees
+      print(np.linalg.inv(L) @ obs) ## back to the source
+
+    Output:
+
+      [0. 1.]
+      [2. 1.]
+      [1. 2.]
+
+  - Reading the three lines: the 90 degree rotation moved (1, 0)
+    to (0, 1). The lens moved the source point (1, 2) to the
+    observed point (2, 1). Inverting the lens and applying it to
+    the observation returned (1, 2), the original source. That
+    last line is the whole lecture in one operation: known
+    observation, known lens, inverse recovers the truth. (added
+    explanation)
+  - In the real model A is built from the black hole's mass and
+    tidal forces rather than picked by hand, and the rotate step
+    runs twice. The linear algebra is the same. (added
+    explanation)
+
+11. KEY TAKEAWAYS
+  - Gravitational lensing is a real-world matrix inversion
+    problem.
+  - General relativity: massive objects bend space-time and so
+    bend the light of galaxies behind them. The ring in the
+    telescope image is a background galaxy wrapped around a
+    massive foreground object.
+  - Simplest model: the singular isothermal sphere. A 2x2 matrix
+    A encodes the object's mass and its tidal forces. Observed
+    light positions are A acting on the true positions.
+  - Estimate the black hole (its size), build A, invert A, apply
+    the inverse to the observed light, and you back out where
+    the light came from.
+  - In the GitHub demo the work is two dot products: a rotation
+    matrix applied once for the black hole's size and once for
+    its tidal forces.
+  - Moving or growing the black hole in the demo warps the
+    galaxy's light into a ring. Tidal forces spin it.
+
+12. QUIZ-SAFE FACTS
+  - Gravitational lensing is based on the theory of general
+    relativity.
+  - Very massive objects named in the lecture: the sun,
+    galaxies, black holes. They bend space-time and can bend
+    light from far-off galaxies.
+  - The ring of light in the telescope image is light from a
+    galaxy behind the massive object, wrapped around it on its
+    way to Earth.
+  - The simplest form of the lensing system is the singular
+    isothermal sphere model.
+  - Matrix A represents the effect of the massive object on the
+    source of light. In the simple model A is two-by-two.
+  - A encodes how massive the black hole is and how much tidal
+    force it creates. Tidal forces twist the light from behind
+    the object.
+  - Knowing details about the black hole, such as how big it is,
+    lets you calculate the inverse of A.
+  - The inverse of A acts on the observed location of light to
+    back out where the light is actually coming from.
+  - The demo code comes from a GitHub library and is not
+    required for the class.
+  - The galaxy object's adjustable properties: size, position
+    relative to the vantage point, how oblong it is, spin.
+  - Two of the demo's steps are matrix dot products. The rotate
+    function computes a rotation matrix and applies it to the x,
+    y points, once for the black hole's size and once for the
+    tidal forces.
+  - In the interactive demo a bigger black hole has a more
+    dramatic effect and eventually produces the telescope ring.
+    Tidal forces spin the light.

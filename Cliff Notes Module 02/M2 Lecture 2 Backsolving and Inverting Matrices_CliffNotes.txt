@@ -1,0 +1,289 @@
+1. NAMING THE PROCEDURE: GAUSSIAN ELIMINATION
+  - Lecture 1 solved M p = c by hand: isolate one unknown, push it
+    into the other equations, repeat, then substitute the numbers
+    back up. That procedure has a name. It is Gaussian elimination.
+  - The lecture gives its other names too: row reduction, and
+    backsolving. "Backsolving" describes the two-step shape of the
+    work, going down the system from the top to the bottom, then
+    back up to collect the solutions for each unknown.
+  - KEY TERM: Gaussian elimination: the algorithm of eliminating
+    unknowns one at a time down a system of linear equations, then
+    substituting solved values back up. Also called row reduction
+    or backsolving.
+  - Why give it a name (added explanation): because it is the same
+    fixed set of moves every time, regardless of the numbers. Once
+    a procedure is fixed, it can be written as a function, run on a
+    thousand-row system, and trusted. Lecture 4 does exactly that.
+
+2. THE MATRIX AS A FUNCTION, AND ITS INVERSE
+  - The lecture reframes what M is. It holds the purchasing data,
+    but because M acts on p to produce c, M is also a function. Feed
+    it a price vector, get a cost vector out.
+  - While you were solving for p, you were implicitly building a
+    second matrix, one that undoes the action of M. It takes the
+    cost vector and gives back the price vector. That matrix is the
+    inverse of M, written M^-1.
+  - Multiply both sides of M p = c by M^-1 and you get p = M^-1 c.
+    The inverse acting on the costs returns the prices. That single
+    line is the whole reason to want an inverse.
+  - The inverse undoes M, so M^-1 acting on M gives the identity
+    matrix back. Applying a function and then its undo leaves you
+    where you started.
+  - KEY TERM: inverse matrix: the matrix M^-1 that undoes M, so that
+    M^-1 M equals the identity matrix.
+  - KEY TERM: identity matrix: the square matrix with ones on the
+    main diagonal and zeros everywhere else. Acting on any vector
+    or matrix, it changes nothing. (added definition)
+  - The practical payoff (added explanation): the substitution in
+    Lecture 1 solved one specific cost vector. The inverse solves
+    every cost vector at once. Same shop, same matrix, new day's
+    receipts, and p = M^-1 c gives the prices without redoing the
+    elimination. You pay the elimination cost once and reuse the
+    result.
+
+3. WHY THE NOTATION IS M^-1
+  - The lecture explains the minus-one exponent by analogy with
+    ordinary numbers. If M were a number, multiplying M by M^-1
+    would be dividing M by M, which gives one.
+  - For matrices, M^-1 acting on M does not give the number one. It
+    gives the identity matrix, which plays the role of one for
+    matrices. That relationship is what the notation is meant to
+    capture.
+  - Carry the analogy carefully (added explanation). There is no
+    "division" of matrices. What there is, is "multiply by the
+    inverse," and for the numbers you already know those are the
+    same thing (dividing by 4 is multiplying by 1/4). Read M^-1 c
+    as "c with M's effect removed," not as a fraction.
+
+4. THE AUGMENTED MATRIX
+  - To find the inverse, the lecture uses the same elimination
+    moves but on a different object. Instead of writing equations,
+    you build an augmented matrix: the original M with an identity
+    matrix of the same size attached to its right side. A vertical
+    line separates the two halves.
+  - Then you perform linear operations on the rows of this wider
+    matrix until the left half has been transformed into the
+    identity matrix. When that happens, whatever now sits in the
+    right half is M^-1.
+  - KEY TERM: augmented matrix: M and the identity matrix I placed
+    side by side, written [M | I], so that row operations apply to
+    both halves at once.
+  - KEY TERM: row operation: one of the moves allowed on the rows of
+    the augmented matrix: multiply or divide a whole row by a
+    number, or subtract a multiple of one row from another. The
+    lecture treats each row as a vector and does vector arithmetic.
+    (added definition)
+  - Why this works (added explanation): every row operation is
+    itself a small matrix multiplication applied to both halves.
+    The sequence of operations that turns the left half from M into
+    I is, taken together, the matrix that turns M into I. That
+    matrix is M^-1 by definition. Because the same sequence was
+    applied to the right half, which started as I, the right half
+    ends as M^-1 times I, which is M^-1. The identity on the right
+    is a recording device. It captures the moves you made.
+  - For example, the coffee shop matrix from Lecture 1, augmented:
+
+      [ 2  1  1 | 1  0  0 ]
+      [ 1  3  2 | 0  1  0 ]
+      [ 1  2  2 | 0  0  1 ]
+
+    The goal is to make the left half look exactly the way the
+    right half looks now.
+
+5. FORWARD PASS: ONES ON THE DIAGONAL, ZEROS BELOW
+  - Step one. Divide the first row by its first entry so that a one
+    sits in the first position. Here the first entry is 2, so
+    divide row 1 by 2:
+
+      [ 1  1/2  1/2 | 1/2  0  0 ]
+      [ 1   3    2  |  0   1  0 ]
+      [ 1   2    2  |  0   0  1 ]
+
+  - Step two. For each remaining row, subtract the first row
+    multiplied by that row's first-column value. The lecture writes
+    these as R2 minus a multiple of R1, R3 minus a multiple of R1.
+    Here both lower rows start with 1, so R2 - 1 R1 and R3 - 1 R1:
+
+      [ 1  1/2  1/2 |  1/2  0  0 ]
+      [ 0  5/2  3/2 | -1/2  1  0 ]
+      [ 0  3/2  3/2 | -1/2  0  1 ]
+
+    The first column now reads 1, 0, 0. That column is done.
+  - Step three. Repeat on the second row. Divide row 2 by its
+    second entry (5/2, so multiply by 2/5) to put a one in the
+    second diagonal position. Then subtract the right multiple of
+    row 2 from row 3 to clear the entry below it. Row 3 has 3/2 in
+    that column, so R3 - (3/2) R2:
+
+      [ 1  1/2  1/2 |  1/2   0   0 ]
+      [ 0   1   3/5 | -1/5  2/5  0 ]
+      [ 0   0   3/5 | -1/5 -3/5  1 ]
+
+    Ones in the first two diagonal spots, zeros below them.
+  - Step four. Scale the last row so its third entry is one. For
+    the lecture's matrix that scale factor is an ugly fraction.
+    Here multiply row 3 by 5/3:
+
+      [ 1  1/2  1/2 |  1/2   0    0  ]
+      [ 0   1   3/5 | -1/5  2/5   0  ]
+      [ 0   0    1  | -1/3  -1   5/3 ]
+
+  - The lecture pauses here to make a point: the right half, which
+    started as the clean identity, is filling up with fractions.
+    That is expected. It is turning into the inverse, and there is
+    no reason the inverse should look simple.
+  - What the forward pass has bought (added explanation): the left
+    half is now upper triangular, ones on the diagonal and zeros
+    under it. In equation terms, the last row involves only p3, the
+    middle row only p2 and p3. That is the same "last equation has
+    one unknown" moment from Lecture 1, just reached with rows
+    instead of sentences.
+  - KEY TERM: pivot: the diagonal entry you divide a row by to make
+    it one. Every step of the forward pass is organized around the
+    next pivot. (added definition)
+
+6. BACKWARD PASS: ZEROS ABOVE
+  - Now work upward. Subtract multiples of the third row from the
+    second and first rows so the third column has zeros above its
+    one. Row 2 has 3/5 there, row 1 has 1/2, so R2 - (3/5) R3 and
+    R1 - (1/2) R3:
+
+      [ 1  1/2  0 |  2/3  1/2  -5/6 ]
+      [ 0   1   0 |   0    1    -1  ]
+      [ 0   0   1 | -1/3  -1    5/3 ]
+
+  - Last move. Subtract a multiple of the second row from the first
+    to clear the second column above its one. Row 1 has 1/2 there,
+    so R1 - (1/2) R2.
+
+      [ 1  0  0 |  2/3   0  -1/3 ]
+      [ 0  1  0 |   0    1   -1  ]
+      [ 0  0  1 | -1/3  -1   5/3 ]
+
+  - The left half is the identity matrix. The right half is the
+    inverse.
+  - The backward pass in Lecture 1 terms (added explanation): this
+    is the substitute-back-up step. Clearing the third column above
+    the pivot is "plug p3 into the earlier equations." Clearing the
+    second column is "plug p2 into the first equation." Rows make
+    it mechanical.
+
+7. READING OFF THE INVERSE AND CHECKING IT
+  - For the coffee shop, the inverse is:
+
+      Q^-1 = [[ 2/3,  0, -1/3],
+              [  0,   1,  -1 ],
+              [-1/3, -1,  5/3]]
+
+  - The lecture's first check: let the inverse act on the original
+    cost vector. It should return the price vector found the hard
+    way in Lecture 1. Here, Q^-1 acting on c = [15, 26, 21]:
+
+      row 1:  (2/3)(15) + 0(26) - (1/3)(21) = 10 - 7      = 3
+      row 2:      0(15) + 1(26) -     1(21) = 26 - 21     = 5
+      row 3: -(1/3)(15) - 1(26) + (5/3)(21) = -5 - 26 + 35 = 4
+
+    p = [3, 5, 4]. Espresso 3, latte 5, muffin 4, matching Lecture 1
+    without a single substitution.
+  - Fractions are the honest form here (added explanation). The
+    inverse of a whole-number matrix is usually fractions, and the
+    denominators all relate to one number that Lecture 3 uses as
+    a test (the determinant, 3 for this matrix). Lecture 4 shows
+    the same inverse as decimals and as fractions, and why you
+    might want each.
+
+8. CHECKING WITH NUMPY, AND THE ALMOST-ZEROS
+  - The lecture checks both claims in NumPy: define M, define the
+    hand-computed inverse, define c, then confirm that the inverse
+    times c gives the prices, and that the inverse times M gives
+    the identity.
+  - The second check looks wrong at first glance. The diagonal is
+    ones, as expected, but the off-diagonal entries are not zeros.
+    They are numbers in scientific notation, in the lecture's run
+    -5 times 10^-17. The lecture spells it out: a decimal point, a
+    long run of zeros, then a 5 at the end. It is zero, just very
+    slightly not zero. The other off-diagonal entries are the same story.
+  - The lecture's fix for readability: round every entry of the
+    result to the tenth decimal place. Then you see ones on the
+    diagonal and zeros (and some minus zeros) everywhere else. The
+    lecture says not to worry about the minus zeros. They are a
+    computer artifact of rounding a tiny negative number.
+  - The coffee shop check:
+
+      import numpy as np
+      Q = np.array([[2, 1, 1], [1, 3, 2], [1, 2, 2]])
+      Qinv = np.array([[2/3, 0, -1/3], [0, 1, -1], [-1/3, -1, 5/3]])
+      c = np.array([15, 26, 21])
+      print(Qinv.dot(c)) ## expect the prices
+      print(Qinv.dot(Q)) ## nearly the identity
+      print(np.round(Qinv.dot(Q), 10)) ## the identity
+
+    The first print gives [3. 5. 4.]. The second gives ones on the
+    diagonal, zeros in most spots, and one entry of about 2.2 times
+    10^-16 in the bottom-left corner. The third gives the clean
+    identity. Which entries pick up the noise, and whether a minus
+    zero appears after rounding, depends on the exact numbers and
+    the order NumPy adds them in. The lecture's run had several
+    noisy entries and some minus zeros. This run has one and none.
+    Same lesson either way.
+  - Why the almost-zeros happen (added explanation): 2/3 and 1/3
+    have no exact binary representation, so the computer stores
+    the nearest value it can and the error, around one part in
+    10^16, shows up when terms that should cancel do not cancel
+    perfectly. Lecture 4 goes into how numbers are stored and how
+    SymPy sidesteps the issue by keeping fractions as fractions.
+    The practical rule: when you expect zeros from floating point
+    arithmetic, round or compare with a tolerance. Never test a
+    float against exactly zero.
+
+9. KEY TAKEAWAYS
+  - The Lecture 1 procedure is Gaussian elimination, also called
+    row reduction or backsolving.
+  - M is data and a function at once. Its inverse M^-1 undoes it,
+    so p = M^-1 c and M^-1 M = I.
+  - The -1 notation comes from numbers: M times M^-1 is like M
+    divided by M, except the answer is the identity matrix instead
+    of one.
+  - To compute the inverse, augment M with I, row-reduce until the
+    left half is I, and read the inverse off the right half.
+  - Forward pass: make each diagonal entry one and clear below it.
+    Backward pass: clear above each one.
+  - Check by multiplying: the inverse times c should return p, and
+    the inverse times M should return I up to floating point noise,
+    which rounding removes.
+
+10. QUIZ-SAFE FACTS
+  - The algorithm from Lecture 1 is called Gaussian elimination. Its
+    other names are row reduction and backsolving.
+  - The two steps in backsolving: go from the top of the system to
+    the bottom, then back up to get the solutions.
+  - M acts on p, so M is a function as well as data.
+  - The matrix that undoes M is the inverse of M, denoted M^-1.
+  - Multiplying both sides of M p = c by M^-1 gives p = M^-1 c.
+  - M^-1 acting on M gives the identity matrix.
+  - The notation is by analogy with numbers: M times M^-1 is like M
+    divided by M, which gives one. For matrices the result is the
+    identity matrix instead of one.
+  - The inverse is found using an augmented matrix: M with an
+    identity matrix of the same size attached on its right, with a
+    vertical line between them.
+  - Row operations are performed until the left side becomes the
+    identity matrix. The right side is then the inverse of M.
+  - The lecture's first step divides the first row by its first
+    entry to get a one there. Each remaining row then has the first
+    row, multiplied by that row's first-column value, subtracted
+    from it. Rows are treated as vectors.
+  - The second stage divides the second row by its second entry
+    and subtracts a multiple of the second row from the third.
+  - The third stage multiplies the last row by the value that puts
+    a one in its third position.
+  - Then multiples of the third row are subtracted from the second
+    and first rows, and finally a multiple of the second row is
+    subtracted from the first.
+  - The inverse acting on the cost vector returns the price vector
+    found by substitution in Lecture 1.
+  - In NumPy, the inverse times M shows ones on the diagonal and
+    very small off-diagonal numbers such as -5 times 10^-17, which
+    are effectively zero.
+  - Rounding the result to the tenth decimal place shows the
+    identity matrix, with some entries displayed as minus zero.

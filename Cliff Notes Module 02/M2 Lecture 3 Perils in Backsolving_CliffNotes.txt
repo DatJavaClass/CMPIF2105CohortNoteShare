@@ -1,0 +1,265 @@
+1. WHY THIS MATTERS
+  - Backsolving (Gaussian elimination, Lectures 1 and 2) gives exact
+    solutions for the unknowns and, along the way, the inverse of
+    the matrix. The catch: it only works for specific types of
+    matrices. This lecture walks through the restrictions.
+  - Three perils are covered. Too few equations. Equations that
+    secretly repeat each other. And an assumption baked into the
+    whole setup, that each item has one fixed price.
+  - Why this lecture matters more than it looks (added explanation):
+    in practice you rarely get to choose your matrix. The data
+    hands it to you. Knowing in advance which shapes of data break
+    the method, and how to tell before you start grinding through
+    the arithmetic, is the difference between a solver that works
+    and one that silently returns nonsense.
+
+2. PERIL ONE: FEWER EQUATIONS THAN UNKNOWNS
+  - Take the three-equation system and ignore the last equation.
+    Now there are two equations and three unknowns.
+  - Follow the same elimination steps. Where Lecture 1 reached a
+    third row holding only p3 and solved it, there is now nothing
+    in the third row. You are left holding two equations in p2 and
+    p3 and you are stuck.
+  - Instead of one unique solution, there are infinitely many. The
+    lecture's reason: the second equation defines a plane in
+    three-dimensional space (Module 1 showed an example), and any
+    point on that plane is a potential solution.
+  - The rule the lecture draws: to solve a system of linear
+    equations you must have at least as many equations as unknown
+    variables. Three unknowns, at least three equations.
+  - The geometry in plain terms (added explanation): one linear
+    equation in three unknowns is a flat sheet of solutions. Two
+    equations pin you to the line where two sheets cross. Three
+    equations pin you to the single point where three sheets meet.
+    Take one sheet away and the answer goes from a point back to a
+    whole line of candidates, which is what "infinite solutions"
+    means here.
+  - For the coffee shop, drop Faye's receipt and keep Dana's and
+    Eli's:
+
+      2p1 +  p2 +  p3 = 15
+       p1 + 3p2 + 2p3 = 26
+
+    Any prices with p3 = 4 and p2 = 5 and p1 = 3 work, but so do
+    p3 = 9, p2 = 2, p1 = 2 (check: 4 + 2 + 9 = 15 and 2 + 6 + 18 =
+    26). Two receipts cannot tell those price lists apart.
+
+3. PERIL TWO: AN EQUATION THAT REPEATS ANOTHER
+  - Having three equations is necessary but not enough. You can
+    still run into trouble if one equation is a linear combination
+    of the other rows.
+  - The lecture's case: the third row is exactly double the second
+    row. Every purchase quantity is doubled, and since the prices
+    are whatever they are and do not change, the total on the right
+    side is doubled too. Three equations, three unknowns, and it
+    still fails.
+  - Using the augmented matrix approach and following the exact
+    steps from Lecture 2 (the first two rows are unchanged, so the
+    early steps are identical), you eventually arrive at a third
+    row with no one left in the third position. There is nothing to
+    solve p3 with. In the lecture's words, the p3 solution has
+    disappeared.
+  - That outcome means M is not invertible. M^-1 does not exist.
+  - KEY TERM: linear combination: a row built by scaling other rows
+    and adding them. A row that is a linear combination of others
+    carries no new information about the unknowns. (added
+    definition)
+  - KEY TERM: invertible: a matrix for which an inverse exists. A
+    matrix with no inverse is called singular. (added definition,
+    the lecture uses "not invertible" and "M^-1 does not exist")
+  - Why doubling a row adds nothing (added explanation): the second
+    equation already says Eli paid 26 for his order. A third
+    equation saying "two of Eli's order costs 52" is the same fact
+    wearing a bigger coat. You still have only two independent
+    facts about three prices, which is Peril One in disguise. The
+    danger is that the row count says three, so nothing looks wrong
+    until the elimination stalls.
+  - For the coffee shop, replace Faye's row with two of Eli's:
+
+      S = [[2, 1, 1],       c = [15, 26, 52]
+           [1, 3, 2],
+           [2, 6, 4]]
+
+    Run the Lecture 2 steps. After clearing the first column, the
+    third row is [0, 5, 3 | -1, 0, 1]. It is exactly twice the new
+    second row [0, 5/2, 3/2 | -1/2, 1, 0] on the left half, so
+    subtracting 2 R2 from it wipes the entire left half of row 3 to
+    zeros. No pivot for p3. Stuck.
+
+4. THE DETERMINANT AS THE INVERTIBILITY TEST
+  - You can test for this without running the elimination. Compute
+    the determinant of M. For the matrix whose third row is twice
+    the second, the determinant is zero.
+  - What a zero determinant means, per the lecture: the determinant
+    measures the volume of the three-dimensional parallelogram (the
+    slanted box) produced when M acts on the unit cube. The course
+    covered the two-dimensional version earlier, where the
+    determinant is the area of the parallelogram produced when a
+    matrix acts on the unit square. Zero volume means the box has
+    been flattened. (added explanation, the flattening image)
+  - Why flat is fatal: if the box is flattened, multiple points on
+    the unit cube map to the same point on the flattened shape. An
+    inverse, if it existed, would have to take that shape back to
+    the cube. But it cannot know which of the several starting
+    points a given output came from. So the inverse does not exist.
+  - The rule the lecture states: check whether M is invertible by
+    calculating its determinant and confirming it is non-zero.
+  - KEY TERM: determinant: a single number computed from a square
+    matrix. Geometrically, the factor by which the matrix scales
+    area (2D) or volume (3D). Zero means the matrix collapses a
+    dimension and has no inverse.
+  - The practical read (added explanation): the determinant is a
+    cheap pre-flight check. One number, computed before any
+    elimination, tells you whether the elimination can finish. The
+    denominators in Lecture 2's inverse (thirds, for the coffee
+    matrix) come from this number. The determinant of the coffee
+    matrix Q is 3. Divide by 3 and you get fractions. Divide by
+    zero and you get nothing, which is the same fact seen from the
+    arithmetic side.
+
+5. THE RESCUE: MORE EQUATIONS THAN UNKNOWNS
+  - Keep the duplicated third row, but bring the original third
+    equation back in as a fourth row. Now there are four equations
+    and three unknowns, and at least three of them are not linear
+    combinations of the others.
+  - Follow the full inversion process. The place where the
+    three-row version got stuck is no longer a dead end. The
+    duplicate row is still unhelpful for finding p3, but the fourth
+    row still has a one in the third position, so p3 can be solved.
+    Multiply that row by the right values, subtract from the
+    remaining rows, and the left half again looks like the identity
+    matrix. You can still solve for p3.
+  - The point: extra equations do not hurt, as long as enough of
+    them are independent. A redundant row just rides along.
+  - For the coffee shop, put Faye back as a fourth customer under
+    the doubled row:
+
+      R = [[2, 1, 1],       c = [15, 26, 52, 21]
+           [1, 3, 2],
+           [2, 6, 4],
+           [1, 2, 2]]
+
+    Three independent rows (Dana, Eli, Faye) survive, and the
+    unique solution [3, 5, 4] comes back.
+  - Reading the rescue practically (added explanation): a dataset
+    with duplicate rows is not broken. Duplicate rows contribute
+    nothing, and the remaining independent rows carry the solution.
+    The failure only happens when duplicates leave you with fewer
+    independent rows than unknowns. Counting independent rows,
+    rather than raw rows, is the real test. (The count of
+    independent rows is called the rank of the matrix, a term the
+    lecture does not use.)
+
+6. PERIL THREE: THE SINGLE-PRICE ASSUMPTION
+  - The entire setup assumes each item has one single price. One
+    price per espresso, one price per latte, and that price does
+    not change from row to row.
+  - In the real world, the shoppers may be at different stores, and
+    the price of the same item varies from store to store. The true
+    price is then a distribution of prices depending on where each
+    person shopped, not a single number.
+  - The lecture's verdict: backsolving is too rigid to handle that
+    scenario. You would need probabilistic approaches to solve the
+    system in that case. Not covered in this module. The course
+    returns to it later.
+  - What "too rigid" means in practice (added explanation):
+    backsolving demands that one price vector explain every receipt
+    exactly. With store-to-store variation, no single vector does,
+    and the arithmetic returns either a wrong exact answer or no
+    answer, with no indication that the model was the problem. The
+    later probabilistic tools trade "exactly" for "best fit" and
+    report how much variation the fit could not explain.
+
+7. THE THREE CASES IN PYTHON
+  - Nothing in this section is from the lecture (added). It is the
+    determinant test and the inverse run against the healthy and
+    the doubled-row coffee shop matrices, so you can see what the
+    failure looks like when a library hits it.
+
+      import numpy as np
+      Q = np.array([[2, 1, 1], [1, 3, 2], [1, 2, 2]])
+      S = np.array([[2, 1, 1], [1, 3, 2], [2, 6, 4]]) ## row 3 = 2 x row 2
+
+      for name, M in (("Q", Q), ("S", S)):
+          print(name, "det =", round(np.linalg.det(M), 10))
+          try:
+              print(np.linalg.inv(M))
+          except np.linalg.LinAlgError as ex:
+              print("no inverse:", ex) ## Singular matrix
+
+    Q reports det = 3.0 and prints its inverse. S reports det = 0.0
+    and the inverse call raises LinAlgError with the message
+    "Singular matrix." That exception is the library's way of
+    saying "no pivot for p3."
+  - The four-row rescue is not a square matrix, so inv and solve
+    (Lecture 4) will not accept it. NumPy's least-squares solver
+    will:
+
+      R = np.array([[2, 1, 1], [1, 3, 2], [2, 6, 4], [1, 2, 2]])
+      c4 = np.array([15, 26, 52, 21])
+      print(np.linalg.lstsq(R, c4, rcond=None)[0].round(10)) ## [3. 5. 4.]
+
+    With three independent rows among the four, it returns the
+    exact prices. (lstsq is a tool beyond this lecture, added so the
+    rescue can be checked.)
+  - Guarding the inverse with try/except is the habit to keep: a
+    singular matrix in production data is a data problem, and you
+    want the program to say so rather than crash.
+
+8. KEY TAKEAWAYS
+  - Backsolving gives exact answers but only for matrices that meet
+    its conditions.
+  - Fewer equations than unknowns means infinitely many solutions.
+    You need at least as many equations as unknowns.
+  - An equation that is a linear combination of others adds no
+    information. If it leaves you with too few independent
+    equations, elimination stalls and the matrix has no inverse.
+  - The determinant is the test: zero means not invertible. It
+    measures the volume of the box the matrix makes from the unit
+    cube, and zero volume means several inputs collapse onto one
+    output.
+  - Extra independent equations rescue a system with a redundant
+    row. More equations than unknowns is fine.
+  - Backsolving assumes one fixed value per unknown. When the true
+    value is a distribution, you need probabilistic methods, which
+    come later in the course.
+
+9. QUIZ-SAFE FACTS
+  - Backsolving gives exact solutions but only works for specific
+    types of matrices.
+  - With two equations and three unknowns, the elimination leaves
+    nothing in the third row and you are stuck with two equations.
+  - In that case there are infinite possible solutions, because the
+    remaining equation defines a plane in three-dimensional space
+    and any point on the plane is a solution.
+  - To solve a system of linear equations you must have at least
+    as many equations as unknown variables.
+  - Even with three equations, a problem arises if one equation is
+    a linear combination of the other rows. The lecture's example
+    makes the third row exactly double the second, with the cost
+    on the right side doubled as well.
+  - In that case the augmented-matrix approach gets stuck with no
+    one in the third position of the third row, so p3 cannot be
+    solved. The p3 solution has disappeared.
+  - This indicates M is not invertible: M^-1 does not exist.
+  - The test is the determinant. The determinant of that matrix is
+    zero.
+  - A zero determinant means the three-dimensional parallelogram
+    produced by M acting on the unit cube has volume zero. In two
+    dimensions the determinant is the area of the parallelogram
+    from the unit square.
+  - Zero volume means multiple points on the unit cube map to the
+    same point, so the inverse cannot know which starting point to
+    map back to.
+  - Check invertibility by calculating the determinant and
+    confirming it is non-zero.
+  - Adding the original third equation back as a fourth row gives
+    four equations and three unknowns with at least three that are
+    not linear combinations. The fourth row still has a one in the
+    third position, so p3 can be solved and the system is solvable.
+  - The setup assumes each item has a single price that does not
+    change. If shoppers use different stores, the true price is a
+    distribution of prices.
+  - Backsolving is too rigid for that case. Probabilistic approaches
+    are needed, and they come later in the course, not in this
+    module.

@@ -1,0 +1,224 @@
+1. WHY THIS MATTERS
+  - Module 1 introduced vectors, matrices, and the operations you
+    can do with them, mostly as mathematical objects. This lecture
+    turns them around and uses them "in a data science way" to
+    solve an actual problem.
+  - The shape of the problem: you have a table of what people
+    bought, you have what each person paid, and you want the price
+    of each item. Nobody handed you a price list. The prices are
+    hidden inside the receipts, and linear algebra is how you pull
+    them back out.
+  - Why this is the right first problem (added explanation): it is
+    the smallest honest case of the thing data science does all
+    day. Known inputs, known outputs, unknown weights in between.
+    A linear regression fit is this exact setup with more rows
+    and noisier numbers.
+
+2. SETTING UP THE PROBLEM AS A MATRIX
+  - The lecture builds a three by three matrix M where each column
+    is a product and each row is a shopper. The entry in a row and
+    column is how many of that product that shopper bought. The
+    matrix stores purchasing behavior.
+  - Each shopper's total from the register goes into a vector, the
+    cost vector c, of length three. One total per shopper, in the
+    same row order as the matrix.
+  - The unknowns are the item prices, collected in a price vector
+    p, also length three, one entry per product in the same column
+    order as the matrix. You do not know these values yet.
+  - The relationship that ties the three together: when M acts on
+    p, the result must be c. Written compactly, M p = c. Two of the
+    three pieces are known (M and c) and one is unknown (p).
+  - For example, a coffee shop sells espresso, lattes, and muffins.
+    Three regulars come through. Dana buys 2 espressos, 1 latte,
+    1 muffin and pays 15. Eli buys 1 espresso, 3 lattes, 2 muffins
+    and pays 26. Faye buys 1 espresso, 2 lattes, 2 muffins and pays
+    21. As a matrix and two vectors:
+
+      Q = [[2, 1, 1],        c = [15, 26, 21]       p = [p1, p2, p3]
+           [1, 3, 2],
+           [1, 2, 2]]
+
+    Rows are Dana, Eli, Faye. Columns are espresso, latte, muffin.
+    The unknowns p1, p2, p3 are the three prices in that order.
+  - KEY TERM: cost vector: the vector of observed totals, one per
+    row of the matrix. The known right-hand side.
+  - KEY TERM: price vector: the vector of unknowns you are solving
+    for, one per column of the matrix.
+  - Reading the matrix (added explanation): pick a row, read across,
+    and you have one person's shopping list. Pick a column, read
+    down, and you have how popular one product was. The matrix is
+    just the data table you would keep anyway. The linear algebra
+    view adds one thing: the table is also a machine that turns a
+    price list into a set of receipts.
+
+3. TURNING THE MATRIX INTO EQUATIONS
+  - M p = c is compact, but to work with it you write out what the
+    matrix product actually does. Each row of M takes a dot product
+    with p, and that dot product must equal the matching entry of
+    c. One row, one dot product, one equation.
+  - The lecture's point: when you write the problem this way, you
+    have defined a system of linear equations, one per shopper.
+    Each row of the matrix is one equation in the system.
+  - For the coffee shop, the three dot products spell out as:
+
+      2p1 + 1p2 + 1p3 = 15     (Dana's row)
+      1p1 + 3p2 + 2p3 = 26     (Eli's row)
+      1p1 + 2p2 + 2p3 = 21     (Faye's row)
+
+  - Three equations, three unknowns (p1, p2, p3). The task is to
+    find values for the unknowns that make all three equations
+    true at the same time.
+  - KEY TERM: system of linear equations: a set of equations that
+    share the same unknowns, where each unknown appears multiplied
+    by a plain number and the terms are added. No squares, no
+    products of unknowns. (added definition)
+  - KEY TERM: linear: each unknown is only ever scaled and added,
+    never squared, multiplied by another unknown, or fed through a
+    function like a square root. That is what keeps the geometry
+    flat (lines, planes) and the algebra solvable by substitution.
+    (added definition)
+  - Why the count matters (added explanation): each equation is one
+    fact about the prices. With three unknowns you need three
+    independent facts to pin them all down. Lecture 3 goes into
+    what happens when you have fewer, or when a "fact" is really a
+    repeat of another one.
+
+4. THE STRATEGY: ONE UNKNOWN AT A TIME
+  - The lecture's plan is substitution. Take one unknown, use one
+    equation to write it as a formula in terms of the remaining
+    unknowns, then push that formula into every other equation so
+    the unknown disappears from them. Repeat with the next unknown
+    on the equations that are left. Each round the system shrinks
+    by one equation and one unknown.
+  - Once you reach an equation with a single unknown, solve it as a
+    number. Then walk back up: substitute that number into the
+    formula for the previous unknown, get another number, and so
+    on until every unknown is a number.
+  - The two directions have a feel to them (added explanation).
+    Going down, you are trading equations for formulas and making
+    the problem smaller. Coming back up, you are cashing the
+    formulas in for numbers. Lecture 2 names the whole procedure.
+  - The mechanics of "write p1 as a formula": subtract the other
+    terms from both sides, then divide both sides by whatever
+    number is multiplying p1. The same two moves work for every
+    step.
+
+5. WORKING THE EXAMPLE FORWARD
+  - Start with Dana's equation and isolate p1. Subtract p2 and p3
+    from both sides, then divide by 2:
+
+      p1 = 15/2 - (1/2)p2 - (1/2)p3
+
+  - Substitute that expression for p1 into Eli's and Faye's
+    equations. Eli's becomes 15/2 - (1/2)p2 - (1/2)p3 + 3p2 + 2p3
+    = 26. Faye's becomes 15/2 - (1/2)p2 - (1/2)p3 + 2p2 + 2p3 = 21.
+  - Combine like terms in each. Eli's p2 terms (3 and -1/2) add to
+    5/2, his p3 terms (2 and -1/2) add to 3/2, and moving the 15/2
+    across leaves 37/2 on the right. Multiply through by 2 to clear
+    the halves. Faye's works the same way and lands on 3p2 + 3p3 =
+    27, which divides by 3 because her coefficients match. The
+    reduced pair is:
+
+      5p2 + 3p3 = 37
+       p2 +  p3 =  9
+
+    p1 is gone from both. Two equations, two unknowns.
+  - Repeat the move on the first of the pair. Isolate p2 by
+    subtracting 3p3 and dividing by 5:
+
+      p2 = 37/5 - (3/5)p3
+
+  - Substitute into the last equation: 37/5 - (3/5)p3 + p3 = 9.
+    Combine the p3 terms (1 - 3/5 = 2/5) and move 37/5 across
+    (9 - 37/5 = 8/5):
+
+      (2/5)p3 = 8/5
+
+  - Multiply both sides by 5/2 and p3 = 4. A muffin costs 4. The
+    lecture's version of this step carries much larger fractions.
+    The moves are identical, and the professor invites you to
+    double check his math. Do the same with your own.
+  - What just happened, in plain terms (added explanation): every
+    substitution used one shopper's receipt to eliminate one price
+    from everybody else's receipt. Three receipts, three prices,
+    three rounds, and the last receipt standing has only one price
+    left in it.
+
+6. WORKING BACK UP TO THE PRICES
+  - Now cash in the formulas from the bottom up. Put p3 = 4 into
+    the formula for p2:
+
+      p2 = 37/5 - (3/5)(4) = 37/5 - 12/5 = 25/5 = 5
+
+    A latte costs 5.
+  - Put p2 = 5 and p3 = 4 into the formula for p1:
+
+      p1 = 15/2 - (1/2)(5) - (1/2)(4) = 15/2 - 5/2 - 4/2 = 6/2 = 3
+
+    An espresso costs 3.
+  - So p = [3, 5, 4]. The lecture closes the loop by plugging the
+    solution back into the original system and confirming every
+    row adds up. Do the same here: Dana 2(3) + 5 + 4 = 15, Eli
+    3 + 3(5) + 2(4) = 26, Faye 3 + 2(5) + 2(4) = 21. All three
+    receipts match.
+  - The point of the check (added explanation): substitution
+    involves a lot of fraction arithmetic, and one slipped sign
+    poisons everything below it. Plugging the answer back into the
+    ORIGINAL equations, not the reduced ones, catches that. It is
+    cheap and it is the same habit as re-running a test after a
+    fix.
+
+7. CHECKING THE ANSWER IN PYTHON
+  - The lecture's second check uses NumPy. Define the matrix as a
+    NumPy array, define the solution vector, take the dot product,
+    and compare against the cost vector. It matches the right-hand
+    side of every equation.
+  - Same check for the coffee shop:
+
+      import numpy as np
+      Q = np.array([[2, 1, 1], [1, 3, 2], [1, 2, 2]]) ## rows = customers
+      p = np.array([3, 5, 4]) ## espresso, latte, muffin
+      print(Q.dot(p)) ## expect [15 26 21]
+
+    Output: [15 26 21]. The dot product of the matrix with the
+    price vector reproduces the receipts, which is exactly the
+    statement M p = c that the whole lecture is built on.
+  - Note what this does and does not do (added explanation). It
+    verifies a solution you already found. It does not find one.
+    Finding the solution in code is Lecture 4's job, and the
+    algorithm behind it is Lecture 2's.
+
+8. KEY TAKEAWAYS
+  - A matrix can hold data (rows of shoppers, columns of products)
+    and at the same time act as a function that turns a price
+    vector into a cost vector: M p = c.
+  - Writing out the row-by-row dot products of M p = c produces a
+    system of linear equations, one equation per row.
+  - Three unknowns need three equations.
+  - Solve by substitution: isolate one unknown as a formula in the
+    others, substitute it into the remaining equations, repeat
+    until one equation has one unknown, solve it, then substitute
+    numbers back up the chain.
+  - Always verify by plugging the solution into the original
+    equations, by hand or with a NumPy dot product.
+
+9. QUIZ-SAFE FACTS
+  - In the lecture's matrix, columns represent grocery items and
+    rows represent the individuals purchasing.
+  - The known quantities are the matrix M (purchases) and the cost
+    vector c (totals paid). The unknown is the price vector p.
+  - The relationship is M acting on p equals c.
+  - Each row of the matrix, dotted with p, gives one linear
+    equation. The full set is a system of linear equations.
+  - The lecture's system has three equations and three unknowns.
+  - Strategy: take one variable at a time, find a formula for it in
+    terms of the other unknowns, substitute that formula into the
+    subsequent equations, group like terms, and repeat.
+  - After the forward pass, the last equation contains only one
+    unknown and can be solved as a number.
+  - Solved values are substituted back up through the earlier
+    equations to recover the remaining unknowns.
+  - The result is checked by substituting the solution into the
+    system, and again in Python by taking the NumPy dot product of
+    the matrix and the solution vector and comparing to the cost
+    vector.

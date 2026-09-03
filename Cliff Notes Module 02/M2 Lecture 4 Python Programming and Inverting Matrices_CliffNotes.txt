@@ -1,0 +1,484 @@
+1. WHY THIS MATTERS
+  - The earlier lectures in this module solved the same system
+    of linear equations by hand, from substitution through the
+    augmented matrix and the inverse. This lecture hands the
+    whole job to Python. Two libraries carry it: NumPy for
+    fast numeric answers and SymPy for exact, human readable
+    ones.
+  - The professor's framing: NumPy is the tool you will actually
+    reach for when a real problem needs an inverse. SymPy is the
+    tool that shows you what the numbers mean, and it is also
+    the tool he used to generate every worked step in the
+    earlier lectures.
+  - Running example for this module: a coffee shop. Three
+    customers (Dana, Eli, Faye), three items (espresso, latte,
+    muffin). Q holds the quantities each customer bought, one
+    row per customer, one column per item. p holds the true
+    prices [3, 5, 4]. The receipts are c = Q p = [15, 26, 21].
+    Pretend the prices are unknown and back them out of the
+    receipts.
+
+      Q = [[2, 1, 1],
+           [1, 3, 2],
+           [1, 2, 2]]
+
+  - KEY TERM: inverse matrix: the square matrix that, multiplied
+    against the original, returns the identity matrix. Written
+    M inverse or Minv in code.
+  - KEY TERM: identity matrix: ones on the main diagonal, zeros
+    everywhere else. Multiplying by it changes nothing. (added
+    definition)
+
+2. SETTING THE PROBLEM UP IN NUMPY
+  - The matrix becomes a NumPy array. The price vector becomes a
+    NumPy array. The dot product of the matrix and the price
+    vector produces the cost vector. That is the whole setup,
+    and it reproduces every number from the hand-solved videos.
+  - The @ symbol is shorthand for the NumPy dot product. Q @ p
+    and np.dot(Q, p) are equivalent. The lecture introduces @ as
+    a convenience and uses both spellings.
+  - Why the dot product is the right operation: each receipt is
+    a row of quantities multiplied element by element against
+    the prices and summed. Dana's row [2, 1, 1] against prices
+    [3, 5, 4] is 6 + 5 + 4 = 15. Matrix times vector does that
+    for every row at once. (added explanation)
+
+      import numpy as np
+
+      Q = np.array([[2, 1, 1], [1, 3, 2], [1, 2, 2]]) ## rows = customers
+      p = np.array([3, 5, 4]) ## espresso, latte, muffin
+      c = Q @ p ## same as np.dot(Q, p)
+      print(c)
+
+    Output: [15 26 21]. Those are the three receipts.
+
+3. NP.LINALG.INV AND THE NEAR-IDENTITY CHECK
+  - NumPy's linear algebra library has a function called inv,
+    short for inverse. Give it a square matrix and it returns
+    the inverse matrix.
+  - The check: if Minv really is the inverse of M, then Minv
+    dot M should return the identity matrix.
+
+      try:
+          Qinv = np.linalg.inv(Q)
+          print(Qinv)
+          print(Qinv @ Q) ## should be near identity
+          print(np.round(Qinv @ Q, 10))
+      except np.linalg.LinAlgError as ex:
+          print("no inverse:", ex) ## Singular matrix
+
+    Output of the first print:
+
+      [[ 0.66666667  0.         -0.33333333]
+       [ 0.          1.         -1.        ]
+       [-0.33333333 -1.          1.66666667]]
+
+    Output of the second print:
+
+      [[ 1.00000000e+00 -1.11022302e-16 -1.11022302e-16]
+       [ 0.00000000e+00  1.00000000e+00  0.00000000e+00]
+       [ 0.00000000e+00  0.00000000e+00  1.00000000e+00]]
+
+    Output of the third print:
+
+      [[ 1. -0. -0.]
+       [ 0.  1.  0.]
+       [ 0.  0.  1.]]
+
+  - The lecture's point about the second print: the product is
+    nearly the identity matrix, but very small numbers sit on
+    the off diagonal. The professor's fix is to run the same
+    calculation and round every element to the tenth decimal
+    place. After rounding it looks much more like the identity.
+  - Why those tiny numbers appear at all: the inverse holds
+    values like 2/3 and 1/3 that have no exact binary
+    representation, so each is stored as the nearest float. The
+    leftover error, on the order of 10 to the minus 16, is what
+    shows up in the off-diagonal spots. Rounding to ten decimal
+    places wipes it out because the error is far smaller than
+    that. The "-0." entries are negative numbers that rounded to
+    zero and kept their sign. (added explanation)
+  - The try/except around inv is not in the lecture. It is there
+    because inv raises LinAlgError on a matrix with no inverse
+    (Lecture 3's singular case), and catching it is cheaper
+    than a crashed notebook. (added)
+  - KEY TERM: LinAlgError: the exception NumPy raises when a
+    linear algebra routine cannot finish, including inv on a
+    singular matrix. (added definition)
+
+4. RECOVERING PRICES FROM THE INVERSE
+  - The inverse is the solution to the system of linear
+    equations. Take the dot product of the inverse with the cost
+    vector and you get the price estimates.
+
+      print(Qinv @ c) ## prices back
+
+    Output: [3. 5. 4.]. Compare against the price vector p that
+    built the receipts in the first place: the same three
+    numbers.
+  - Why this works: c = Q p. Multiply both sides on the left by
+    Q inverse. The left side becomes Qinv c. The right side
+    becomes (Qinv Q) p, and Qinv Q is the identity, so the right
+    side is just p. The inverse undoes what Q did to the prices.
+    (added explanation)
+  - The trailing decimal points in [3. 5. 4.] mean the answer
+    came back as floats, because the inverse was a float matrix.
+    Same values, different storage. (added explanation)
+
+5. NP.LINALG.SOLVE, THE MORE ABSTRACT ROUTE
+  - The inv route is revealing: you see the matrix operations
+    and you physically hold the inverse matrix in a variable.
+    NumPy also offers a shortcut called solve, in the same
+    linear algebra library. Hand it the matrix and the cost
+    vector, ask for the prices, and it returns them.
+
+      print(np.linalg.solve(Q, c)) ## same answer, no Qinv in hand
+
+    Output: [3. 5. 4.].
+  - The lecture describes solve as a slightly more abstract
+    approach to the same problem, and says that behind the
+    scenes solve is doing exactly the same thing: it calculates
+    the inverse of M and then takes the dot product of that
+    inverse with the cost vector to calculate prices.
+  - Practical read: use solve when you only want the answer and
+    have no other use for the inverse. Use inv when you need the
+    inverse itself, for example to apply it to several different
+    cost vectors or to inspect it. (added explanation)
+
+6. NUMPY IS FAST BUT DECIMALS ARE HARD TO READ
+  - Computationally, NumPy is your best bet for matrix inverse
+    problems. It is very optimized and one of the fastest
+    solutions available.
+  - The catch: the answers are hard to read from a human
+    perspective. Every element of the inverse comes back as a
+    decimal. The decimals are equivalent to the fractions you
+    get solving by hand, but figuring out which concise fraction
+    0.66666667 represents takes work, and -0.33333333 or
+    1.66666667 takes more.
+  - Compare the printed inverse in section 3 against the exact
+    inverse from Lecture 2:
+
+      [[ 2/3,  0, -1/3],
+       [   0,  1,   -1],
+       [-1/3, -1,  5/3]]
+
+    Same matrix. The fraction form tells you at a glance that
+    the corner entries are thirds. The decimal form makes you
+    guess. (added explanation)
+
+7. SYMPY, SYMBOLIC PYTHON
+  - SymPy stands for symbolic Python. It does symbolic
+    arithmetic, which the professor describes as doing math in
+    a human readable way: keeping fractions as fractions instead
+    of calculating them out to decimals, for example.
+  - Scope note from the lecture: the course is not going to
+    explain how symbolic arithmetic works internally. The goal
+    is to know the tool exists and how to use it for readable
+    matrix inversion results.
+  - KEY TERM: symbolic arithmetic: computing with exact
+    mathematical objects (fractions, symbols, expressions)
+    rather than with decimal approximations of them. (added
+    definition)
+
+8. HOW THE COMPUTER STORES NUMBERS, BASE 2 BIT STRINGS
+  - To motivate SymPy the lecture first asks how NumPy and
+    Python represent numbers at all. Writing two integers as
+    a = 13 and b = 6 is human readable, but it is not what the
+    computer holds.
+    The computer takes each number and represents it in base 2
+    as a bit string.
+  - The lecture uses the bitstring package to show the binary
+    form of a number. Each position in the string represents a
+    power of two: the first position is 2 to the 0, then 2 to
+    the 1, then 2 to the 2, then 2 to the 3, and so on. The ones
+    and zeros say whether that power of two is included in the
+    sum that rebuilds the base 10 number.
+
+      from bitstring import Bits
+
+      a, b = 13, 6
+      for n in (a, b, a + b):
+          print(n, Bits(uint=n, length=8).bin) ## base 2, 8 bits
+
+    Output:
+
+      13 00001101
+      6 00000110
+      19 00010011
+
+  - In this printout the rightmost bit is the 2 to the 0 place
+    and the powers grow moving left. (added)
+  - Reading 13: from the right, a one in the 2 to the 0 place
+    (include 1), a zero in the 2 to the 1 place (skip 2), a one
+    in the 2 to the 2 place (include 4), a one in the 2 to the 3
+    place (include 8). 8 + 4 + 1 = 13.
+  - Reading 6: zero in the ones place, one in the twos place,
+    one in the fours place, zero in the eights place. 4 + 2 = 6.
+  - KEY TERM: bit string: a sequence of ones and zeros, each
+    marking whether a power of two contributes to the number.
+  - KEY TERM: base 2: the number system with only the digits 0
+    and 1, where each place is a power of two. (added
+    definition)
+
+9. BITWISE ADDITION WITH CARRY
+  - What the computer does when it adds a and b: it takes the
+    two bit strings and adds them bitwise, component by
+    component, starting from the 2 to the 0 place.
+  - The rule the lecture states: every element of a bit string
+    must be a one or a zero. When two ones add to 2, that is too
+    large for one position, so the overflow carries into the
+    next column. Write a zero in the current column and imagine
+    a one hanging above the next column to the left.
+  - Walking 13 + 6:
+      Ones column: 1 + 0 = 1. Write 1.
+      Twos column: 0 + 1 = 1. Write 1.
+      Fours column: 1 + 1 = 2. Write 0, carry 1 into the eights.
+      Eights column: 1 + 0 plus the carried 1 = 2. Write 0,
+        carry 1 into the sixteens.
+      Sixteens column: 0 + 0 plus the carried 1 = 1. Write 1.
+  - Result: 00010011, which is 16 + 2 + 1 = 19, and 13 + 6 is in
+    fact 19. That matches the third line of the printout above.
+  - The lecture provides extra Python code that mirrors what the
+    CPU does when adding bit strings, for anyone who wants the
+    detail.
+  - The lecture's explicit scope note: for this course you do
+    not need to understand binary representation or binary
+    arithmetic. It is shown only to explain what NumPy and
+    Python are doing underneath when they add numbers.
+  - Why it matters for the SymPy story anyway: fractions like
+    1/3 have no finite base 2 form, so once a number is stored
+    as bits it is already an approximation. Every decimal you
+    saw in the NumPy inverse inherits that. (added explanation)
+
+10. SYMPY FRACTIONS STAY HUMAN READABLE
+  - Plain Python route: define two ordinary numbers as fractions,
+    add them. Under the hood the computer represents each as a
+    binary number, adds the binary numbers, and converts back to
+    a decimal for display. You get a decimal.
+  - SymPy route: define the same two values as symbolic
+    fractions, add them. SymPy returns a fraction, not a
+    decimal.
+
+      from sympy import Rational
+
+      a, b = 1/3, 1/4
+      print(a + b) ## plain Python float
+      x, y = Rational(1, 3), Rational(1, 4)
+      print(x + y) ## sympy keeps the fraction
+
+    Output:
+
+      0.5833333333333333
+      7/12
+
+  - The two answers are equal in value. But looking at
+    0.5833333333333333 it is not immediately clear that this
+    decimal is the much simpler fraction 7/12. Symbolic
+    arithmetic keeps the simple human readable form all the way
+    through.
+  - KEY TERM: Rational: SymPy's exact fraction type. Rational(1,
+    3) is one third, stored as numerator and denominator, never
+    as a decimal. (added definition)
+
+11. THE PROFESSOR'S SYMBOLIC GAUSSIAN ELIMINATION FUNCTION
+  - A peek under the hood of the earlier videos. The professor
+    did not solve the augmented-matrix steps by hand and type
+    them up. He wrote a function that follows the algorithm from
+    Lecture 2 and prints the matrix at every step.
+  - The function is called symbolic Gaussian elimination. What
+    it does, step by step, as the lecture describes it:
+      Take a square matrix M and read off its dimensions.
+      Build the augmented matrix: M with the identity matrix
+        attached on the right hand side.
+      Go row by row. For row i, normalize the i-th component of
+        the i-th row so a one sits there.
+      Subtract multiples of that normalized row from the
+        remaining rows below it, until the bottom left is all
+        zeros and the main diagonal is all ones. That forward
+        sweep is one for loop.
+      Then go back up. Take each row from the bottom, subtract
+        multiples of it from the rows above it, so the columns
+        above each diagonal one become zeros.
+      Print the matrix after each step.
+  - When the forward sweep and the back sweep finish, the left
+    hand side is the identity and the right hand side is the
+    inverse matrix. On the coffee shop matrix the right side
+    comes out as the fraction matrix shown in section 6, the
+    same numbers NumPy produced, only readable.
+  - The input is declared a symbolic mathematical object first
+    (a SymPy Matrix), which is why the printed steps carry
+    fractions like 1/2 and 5/2 instead of 0.5 and 2.5. Lecture
+    2's step list for Q, from R1/2 through the final
+    R1 - (1/2)R2, is exactly the trace this function prints.
+    (added explanation)
+  - KEY TERM: Gaussian elimination: the row-operation algorithm
+    that reduces a matrix to the identity, applying the same
+    operations to an attached identity to produce the inverse.
+    (added definition)
+  - KEY TERM: augmented matrix: the original matrix and the
+    identity side by side as one wider matrix. (added
+    definition)
+
+12. THE SYMBOLIC 2X2 MATRIX AND ITS CLOSED-FORM INVERSE
+  - The lecture's turn: since the inverse algorithm is a fixed
+    sequence of steps, you could write the whole thing out as an
+    equation once and reuse it. SymPy makes that easy. Instead
+    of a matrix of specific numbers, build a matrix of symbols
+    and ask SymPy to invert it.
+
+      from sympy import symbols, Matrix, lambdify
+
+      a11, a12, a21, a22 = symbols("a11 a12 a21 a22")
+      A = Matrix([[a11, a12], [a21, a22]])
+      Ainv = A.inv()
+      print(Ainv)
+
+    Output:
+
+      Matrix([[a22/(a11*a22 - a12*a21), -a12/(a11*a22 - a12*a21)],
+              [-a21/(a11*a22 - a12*a21), a11/(a11*a22 - a12*a21)]])
+
+  - Read it as one shared denominator, a11*a22 - a12*a21, over
+    a rearranged matrix: swap the diagonal entries, negate the
+    off-diagonal entries. Written compactly:
+
+      Ainv = (1 / (a11*a22 - a12*a21)) * [[ a22, -a12],
+                                           [-a21,  a11]]
+
+  - The lecture's read on it: for the two-by-two case these
+    equations are not so crazy. Give me any two-by-two matrix,
+    fill in the four numbers, plug them into these four
+    expressions, and out comes the inverse. Not too cumbersome.
+  - KEY TERM: closed-form solution: a formula you evaluate
+    directly, with no iterative steps, for a given input. (added
+    definition)
+  - KEY TERM: determinant: the shared denominator a11*a22 -
+    a12*a21 in the 2x2 case. Lecture 3 covers it as the
+    invertibility test. (added definition)
+
+13. PLUGGING NUMBERS INTO THE CLOSED FORM
+  - The lecture's method: define a function that takes values
+    for the four symbols and evaluates the symbolic inverse
+    expression with them. Feed it a concrete matrix and it
+    returns the numeric inverse.
+
+      f = lambdify((a11, a12, a21, a22), Ainv) ## plug numbers in
+      print(f(4, 7, 2, 6))
+      print(Matrix([[4, 7], [2, 6]]).inv()) ## exact fractions
+
+    Output:
+
+      [[ 0.6 -0.7]
+       [-0.2  0.4]]
+      Matrix([[3/5, -7/10], [-1/5, 2/5]])
+
+  - Checking by hand against the closed form for N = [[4, 7],
+    [2, 6]]: the denominator is 4*6 - 7*2 = 24 - 14 = 10. Swap
+    the diagonal: 6 and 4. Negate the off-diagonal: -7 and -2.
+    Divide everything by 10: [[6/10, -7/10], [-2/10, 4/10]] =
+    [[3/5, -7/10], [-1/5, 2/5]]. That is the second printout,
+    and 0.6, -0.7, -0.2, 0.4 is the same matrix as decimals.
+  - Why it is worth having both prints: lambdify hands the
+    expression to NumPy so you get fast decimals, while inv on
+    a SymPy Matrix stays exact. Same closed form, two
+    presentations, the same trade the whole lecture is about.
+    (added explanation)
+  - KEY TERM: lambdify: SymPy's function that turns a symbolic
+    expression into a callable Python function of the listed
+    symbols. (added definition)
+
+14. WHY A ZERO DENOMINATOR EXPLAINS NON-INVERTIBLE MATRICES
+  - Once you see the closed form, the lecture says, you can
+    start to understand why relationships between the rows of a
+    matrix cause problems when you calculate the inverse: you
+    would end up with a zero in one of the denominators.
+  - Every entry of the 2x2 inverse divides by a11*a22 -
+    a12*a21. If that quantity is zero, all four entries are
+    division by zero and no inverse exists.
+  - Connecting it to Lecture 3's singular coffee matrix, where
+    Faye's row was double Eli's: when one row is a multiple of
+    another, a11*a22 and a12*a21 come out equal, the denominator
+    is zero, and NumPy raises LinAlgError("Singular matrix").
+    For example [[1, 2], [2, 4]] gives 1*4 - 2*2 = 0. (added
+    explanation)
+  - KEY TERM: singular matrix: a square matrix with no inverse.
+    In the 2x2 closed form, one whose denominator is zero.
+    (added definition)
+
+15. THE SYMBOLIC 3X3 INVERSE
+  - The same approach gets complicated quickly. The lecture
+    builds a generic symbolic three-by-three matrix and asks
+    SymPy for its inverse. Two observations from the professor:
+    it takes a second longer to compute, and the resulting
+    equations get really large really quickly.
+  - It becomes confusing what you have done. But the professor's
+    closing point: those large expressions are just the same
+    elimination steps from the earlier videos, written out as
+    one formula instead of executed on specific numbers.
+  - For scale: with nine symbols b11 through b33, SymPy's
+    printed 3x3 inverse runs to roughly 960 characters, and the
+    single top-left entry is (b22*b33 - b23*b32) divided by a
+    six-term denominator. The shared denominator is the 3x3
+    determinant. Compare the 2x2 denominator's two terms.
+    (added explanation)
+  - The practical lesson: closed forms are for understanding.
+    For anything bigger than 2x2, let the algorithm (or NumPy)
+    run the steps for you. (added explanation)
+
+16. KEY TAKEAWAYS
+  - NumPy setup: matrix as np.array, prices as np.array, costs
+    from the dot product. @ is shorthand for np.dot.
+  - np.linalg.inv returns the inverse. Minv @ M should be the
+    identity, and it is, up to tiny off-diagonal floats that
+    rounding to the tenth decimal place removes.
+  - Minv @ c recovers the prices. np.linalg.solve(M, c) does it
+    in one call and, per the lecture, computes the inverse and
+    the dot product behind the scenes.
+  - NumPy is the fast choice. Its decimal output is hard to
+    read as fractions.
+  - Computers store numbers as base 2 bit strings and add them
+    bitwise with carries. Not required for the course.
+  - SymPy keeps fractions as fractions (7/12, not
+    0.5833333333333333) and inverts matrices of symbols.
+  - The professor generated the earlier lectures' step-by-step
+    inverses with a SymPy Gaussian elimination function:
+    augment, normalize, sweep down, sweep up, print each step.
+  - The 2x2 closed form has one shared denominator. A zero
+    denominator is why some matrices have no inverse.
+  - The symbolic 3x3 inverse is slow to compute and huge to
+    read.
+
+17. QUIZ-SAFE FACTS
+  - NumPy's inverse function is inv, inside its linear algebra
+    library (np.linalg.inv). It takes a square matrix.
+  - The @ symbol is shorthand for the NumPy dot product.
+  - The inverse times the original matrix should equal the
+    identity matrix. In NumPy the result has very small numbers
+    on the off diagonal, fixed by rounding.
+  - The inverse dotted with the cost vector gives the prices.
+  - np.linalg.solve takes the matrix and the cost vector and
+    returns the prices. The lecture states that behind the
+    scenes it calculates the inverse and dots it with the cost
+    vector.
+  - NumPy is described as very optimized and one of the fastest
+    solutions available. Its drawback is human readability of
+    decimal output.
+  - SymPy stands for symbolic Python and does symbolic
+    arithmetic.
+  - Computers represent numbers in base 2 as bit strings. Each
+    position is a power of two, starting at 2 to the 0.
+  - Bit strings are added bitwise. When a column sums to 2, a
+    zero is written and a one carries into the next column.
+  - The lecture states binary representation and arithmetic are
+    not required for this course.
+  - SymPy represents fraction sums as fractions, not decimals.
+  - The professor's function is called symbolic Gaussian
+    elimination. It augments M with the identity, normalizes
+    each diagonal entry to one, subtracts multiples downward,
+    then subtracts multiples upward, printing each step.
+  - The symbolic 2x2 inverse is a set of four equations you can
+    fill numbers into. The lecture calls it not too cumbersome.
+  - A zero in a denominator of the closed form explains why
+    relationships between rows make a matrix non-invertible.
+  - The symbolic 3x3 inverse takes longer and produces very
+    large equations.
